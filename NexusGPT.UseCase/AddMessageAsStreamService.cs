@@ -38,7 +38,7 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
         var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
         
         var openAiMessages = new List<ChatMessage>

@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
         service.AddScoped<IChangeTitleService, ChangeTitleService>();
         service.AddScoped<IDeleteTopicService, DeleteTopicService>();
         service.AddScoped<ITopicQueryService, TopicQueryService>();
-        service.AddScoped<IImportTopicService, ImportTopicService>();
+        service.AddScoped<IShareTopicService, ShareTopicService>();
         return service;
     }
     

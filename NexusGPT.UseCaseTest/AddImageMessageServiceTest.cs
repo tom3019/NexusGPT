@@ -61,7 +61,7 @@ public class AddImageMessageServiceTest
         Func<Task> act = async () => await service.HandlerAsync(input);
         
         // Assert
-        await act.Should().ThrowAsync<MessageChannelNotFoundException>();
+        await act.Should().ThrowAsync<TopicNotFoundException>();
     }
     
     [Fact]

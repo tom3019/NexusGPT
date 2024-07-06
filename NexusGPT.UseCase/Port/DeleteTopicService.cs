@@ -19,13 +19,13 @@ public class DeleteTopicService : IDeleteTopicService
     /// <param name="channelId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    /// <exception cref="MessageChannelNotFoundException"></exception>
+    /// <exception cref="TopicNotFoundException"></exception>
     public async Task<bool> HandleAsync(Guid channelId, Guid memberId)
     {
         var messageChannel = await _topicOutPort.GetAsync(channelId, memberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
 
         var success = await _topicOutPort.DeleteAsync(messageChannel);

@@ -10,6 +10,6 @@ public interface IDeleteTopicService
     /// <param name="channelId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    /// <exception cref="MessageChannelNotFoundException"></exception>
+    /// <exception cref="TopicNotFoundException"></exception>
     Task<bool> HandleAsync(Guid channelId, Guid memberId);
 }

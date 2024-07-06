@@ -1,8 +1,9 @@
 using NexusGPT.UseCase.Exceptions;
+using NexusGPT.UseCase.Port.Out;
 
 namespace NexusGPT.UseCase.Port.In;
 
-public interface IImportTopicService
+public interface IShareTopicService
 {
     /// <summary>
     /// 處理程序
@@ -10,6 +11,6 @@ public interface IImportTopicService
     /// <param name="id"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    /// <exception cref="MessageChannelNotFoundException"></exception>
-    Task<Guid> HandlerAsync(Guid id, Guid memberId);
+    /// <exception cref="TopicNotFoundException"></exception>
+    Task<ShareTopicResultModel> HandlerAsync(Guid id, Guid memberId);
 }

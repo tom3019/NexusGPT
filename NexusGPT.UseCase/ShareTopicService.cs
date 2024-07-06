@@ -9,14 +9,14 @@ namespace NexusGPT.UseCase;
 /// <summary>
 /// 匯入頻道服務
 /// </summary>
-public class ImportTopicService : IImportTopicService
+public class ShareTopicService : IShareTopicService
 {
     private readonly ITopicOutPort _topicOutPort;
     private readonly TimeProvider _timeProvider;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IDomainEventBus _domainEventBus;
 
-    public ImportTopicService(ITopicOutPort topicOutPort,
+    public ShareTopicService(ITopicOutPort topicOutPort,
         TimeProvider timeProvider,
         IMessageOutPort messageOutPort,
         IDomainEventBus domainEventBus)
@@ -33,13 +33,13 @@ public class ImportTopicService : IImportTopicService
     /// <param name="id"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    /// <exception cref="MessageChannelNotFoundException"></exception>
-    public async Task<Guid> HandlerAsync(Guid id, Guid memberId)
+    /// <exception cref="TopicNotFoundException"></exception>
+    public async Task<ShareTopicResultModel> HandlerAsync(Guid id, Guid memberId)
     {
         var messageChannel = await _topicOutPort.GetAsync(id);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
 
         var newId = await _topicOutPort.GenerateIdAsync();
@@ -61,9 +61,17 @@ public class ImportTopicService : IImportTopicService
         if (success)
         {
             await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
-            return newId;
+            return new ShareTopicResultModel
+            {
+                TopicId = newId,
+                Title = newMessageChannel.Title
+            };
         }
 
-        return Guid.Empty;
+        return new ShareTopicResultModel
+        {
+            TopicId = Guid.Empty,
+            Title = newMessageChannel.Title
+        };
     }
 }

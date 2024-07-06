@@ -29,7 +29,7 @@ public class ChangeTitleService : IChangeTitleService
         var messageChannel = await _topic.GetAsync(topicId, memberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
         
         messageChannel.ChangeTitle(title);

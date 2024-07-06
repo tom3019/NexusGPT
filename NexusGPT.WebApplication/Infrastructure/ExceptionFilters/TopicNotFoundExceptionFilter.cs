@@ -5,11 +5,11 @@ using NexusGPT.UseCase.Exceptions;
 namespace NexusGPT.WebApplication.Infrastructure.ExceptionFilters;
 
 [AttributeUsage(AttributeTargets.Method|AttributeTargets.Class)]
-public class MessageChannelNotFoundExceptionFilter : ExceptionFilterAttribute
+public class TopicNotFoundExceptionFilter : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
-        if (context.Exception is MessageChannelNotFoundException)
+        if (context.Exception is TopicNotFoundException)
         {
             context.Result = new NotFoundObjectResult(new
             {

@@ -14,7 +14,7 @@ namespace NexusGPT.WebApplication.Controllers;
 [ApiVersion("1.0")]
 [Produces("application/json")]
 [Consumes("application/json")]
-[MessageChannelNotFoundExceptionFilter]
+[TopicNotFoundExceptionFilter]
 public class TopicController : ControllerBase
 {
     private readonly ICreateTopicService _createTopicService;
@@ -22,21 +22,21 @@ public class TopicController : ControllerBase
     private readonly IDeleteTopicService _deleteTopicService;
     private readonly ITopicQueryService _topicQueryService;
     private readonly IHubContext<TopicHub> _hubContext;
-    private readonly IImportTopicService _importTopicService;
+    private readonly IShareTopicService _shareTopicService;
 
     public TopicController(ICreateTopicService createTopicService,
         IChangeTitleService changeTitleService,
         IDeleteTopicService deleteTopicService,
         ITopicQueryService topicQueryService,
         IHubContext<TopicHub> hubContext,
-        IImportTopicService importTopicService)
+        IShareTopicService shareTopicService)
     {
         _createTopicService = createTopicService;
         _changeTitleService = changeTitleService;
         _deleteTopicService = deleteTopicService;
         _topicQueryService = topicQueryService;
         _hubContext = hubContext;
-        _importTopicService = importTopicService;
+        _shareTopicService = shareTopicService;
     }
 
     /// <summary>
@@ -235,8 +235,8 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var channelId = await _importTopicService.HandlerAsync(parameter.TopicId, memberId);
-        if (channelId == Guid.Empty)
+        var shareTopicResultModel = await _shareTopicService.HandlerAsync(parameter.TopicId, memberId);
+        if (shareTopicResultModel.TopicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
             {
@@ -255,6 +255,46 @@ public class TopicController : ControllerBase
                 {
                     TopicId = Guid.NewGuid(),
                     Title = parameter.Title
+                }
+            });
+
+        return Ok(new ResultViewModel<Guid>
+        {
+            StatuesCode = 200,
+            StatusMessage = "OK",
+            Data = Guid.NewGuid()
+        });
+    }
+
+    /// <summary>
+    /// 分享聊天室
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost("share/{id:guid}")]
+    public async Task<IActionResult> ShareAsync(Guid id)
+    {
+        var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
+        var shareTopicResultModel = await _shareTopicService.HandlerAsync(id, memberId);
+        if (shareTopicResultModel.TopicId == Guid.Empty)
+        {
+            return BadRequest(new ResultViewModel<Guid>
+            {
+                StatuesCode = 400,
+                StatusMessage = "建立失敗",
+                Data = Guid.Empty
+            });
+        }
+
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicImportResult",
+            new ResultViewModel<object>
+            {
+                StatuesCode = 200,
+                StatusMessage = "OK",
+                Data = new
+                {
+                    TopicId = Guid.NewGuid(),
+                    Title = shareTopicResultModel.Title
                 }
             });
 
