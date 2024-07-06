@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions
         service.AddScoped<IDeleteTopicService, DeleteTopicService>();
         service.AddScoped<ITopicQueryService, TopicQueryService>();
         service.AddScoped<IShareTopicService, ShareTopicService>();
+        service.AddScoped<IImportTopicService, ImportTopicService>();
         return service;
     }
     

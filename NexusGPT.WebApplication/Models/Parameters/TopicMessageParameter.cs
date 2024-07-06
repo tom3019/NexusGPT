@@ -1,14 +1,7 @@
-﻿using NexusGPT.Entities;
+namespace NexusGPT.WebApplication.Models.Parameters;
 
-namespace NexusGPT.WebApplication.Models.ResultViewModel;
-
-public class TopicMessageViewModel
+public class TopicMessageParameter
 {
-    /// <summary>
-    /// 訊息ID
-    /// </summary>
-    public Guid MessageId { get; set; }
-    
     /// <summary>
     /// 問題
     /// </summary>
@@ -47,5 +40,4 @@ public class TopicMessageViewModel
     /// The create time.
     /// </value>
     public DateTime CreateTime { get; set; }
-
 }

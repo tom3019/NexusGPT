@@ -23,13 +23,15 @@ public class TopicController : ControllerBase
     private readonly ITopicQueryService _topicQueryService;
     private readonly IHubContext<TopicHub> _hubContext;
     private readonly IShareTopicService _shareTopicService;
+    private readonly IImportTopicService _importTopicService;
 
     public TopicController(ICreateTopicService createTopicService,
         IChangeTitleService changeTitleService,
         IDeleteTopicService deleteTopicService,
         ITopicQueryService topicQueryService,
         IHubContext<TopicHub> hubContext,
-        IShareTopicService shareTopicService)
+        IShareTopicService shareTopicService,
+        IImportTopicService importTopicService)
     {
         _createTopicService = createTopicService;
         _changeTitleService = changeTitleService;
@@ -37,6 +39,7 @@ public class TopicController : ControllerBase
         _topicQueryService = topicQueryService;
         _hubContext = hubContext;
         _shareTopicService = shareTopicService;
+        _importTopicService = importTopicService;
     }
 
     /// <summary>
@@ -204,16 +207,17 @@ public class TopicController : ControllerBase
         {
             TopicId = messageChannel.Id,
             Title = messageChannel.Title,
-            Messages = messageChannel.Messages.Select(x => new TopicMessageViewModel
-            {
-                MessageId = x.Id,
-                Question = x.Question,
-                Answer = x.Answer,
-                QuestionTokenCount = x.QuestionTokenCount,
-                AnswerTokenCount = x.AnswerTokenCount,
-                TotalTokenCount = x.TotalTokenCount,
-                CreateTime = x.CreateTime.DateTime
-            }).OrderByDescending(x => x.CreateTime),
+            Messages = messageChannel.Messages.Select(x =>
+                new TopicMessageViewModel
+                {
+                    MessageId = x.Id,
+                    Question = x.Question,
+                    Answer = x.Answer,
+                    QuestionTokenCount = x.QuestionTokenCount,
+                    AnswerTokenCount = x.AnswerTokenCount,
+                    TotalTokenCount = x.TotalTokenCount,
+                    CreateTime = x.CreateTime.DateTime
+                }).OrderByDescending(x => x.CreateTime),
             CreateTime = messageChannel.CreateTime.DateTime
         };
 
@@ -235,7 +239,23 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var shareTopicResultModel = await _shareTopicService.HandlerAsync(parameter.TopicId, memberId);
+
+        var input = new ImportTopicInput
+        {
+            MemberId = memberId,
+            Title = parameter.Title,
+            Messages = parameter.Messages.Select(x =>
+                new ImportMessageParameter
+                {
+                    Question = x.Question,
+                    Answer = x.Answer,
+                    QuestionTokenCount = x.QuestionTokenCount,
+                    AnswerTokenCount = x.AnswerTokenCount,
+                    TotalTokenCount = x.TotalTokenCount,
+                    CreateTime = x.CreateTime
+                })
+        };
+        var shareTopicResultModel = await _importTopicService.HandlerAsync(input);
         if (shareTopicResultModel.TopicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
@@ -313,7 +333,7 @@ public class TopicController : ControllerBase
     /// <returns></returns>
     [HttpGet("search")]
     [ProducesResponseType<ResultViewModel<IEnumerable<SearchTopicViewModel>>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> SearchAsync([FromQuery]SearchTopicParameter parameter)
+    public async Task<IActionResult> SearchAsync([FromQuery] SearchTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var searchMessageChannelDataModels =
@@ -326,7 +346,7 @@ public class TopicController : ControllerBase
                     TopicId = x.Id,
                     MessageId = x.MessageIds
                 });
-        
+
         return Ok(new ResultViewModel<IEnumerable<SearchTopicViewModel>>
         {
             StatuesCode = 200,

@@ -9,7 +9,7 @@ public class MessageChannelMaxCountExceptionFilter : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
-        if (context.Exception is MessageChannelMaxCountException)
+        if (context.Exception is TopicMaxCountException)
         {
             context.Result = new BadRequestObjectResult(new
             {

@@ -33,16 +33,16 @@ public class CreateTopicService : ICreateTopicService
         var messageChannels = await _topicOutPort.GetListAsync(memberId);
         if (messageChannels.Count() >= 5)
         {
-            throw new MessageChannelMaxCountException("超過最大聊天室數量");
+            throw new TopicMaxCountException("超過最大聊天室數量");
         }
 
         var topicId = await _topicOutPort.GenerateIdAsync();
-        var messageChannel = new Topic(topicId, memberId, title, _timeProvider);
+        var topic = new Topic(topicId, memberId, title, _timeProvider);
 
-        var success = await _topicOutPort.SaveAsync(messageChannel);
+        var success = await _topicOutPort.SaveAsync(topic);
         if (success)
         {
-            await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
+            await _domainEventBus.DispatchDomainEventsAsync(topic);
             return topicId;
         }
         
