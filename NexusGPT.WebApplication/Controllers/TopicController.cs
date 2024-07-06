@@ -195,7 +195,7 @@ public class TopicController : ControllerBase
     /// </summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType<ResultViewModel<TopicDetailViewModel>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTopicDetailAsync(Guid id)
+    public async Task<IActionResult> GetDetailAsync(Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var messageChannel = await _messageChannelQueryService.GetDetailAsync(id, memberId);
@@ -232,7 +232,7 @@ public class TopicController : ControllerBase
     /// <returns></returns>
     [HttpPost("import")]
     [ProducesResponseType<ResultViewModel<Guid>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ImportTopicAsync(ImportTopicParameter parameter)
+    public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var channelId = await _importChannelService.HandlerAsync(parameter.TopicId, memberId);
@@ -273,7 +273,7 @@ public class TopicController : ControllerBase
     /// <returns></returns>
     [HttpGet("search")]
     [ProducesResponseType<ResultViewModel<IEnumerable<SearchTopicViewModel>>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> SearchTopicAsync([FromQuery]SearchTopicParameter parameter)
+    public async Task<IActionResult> SearchAsync([FromQuery]SearchTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var searchMessageChannelDataModels =
