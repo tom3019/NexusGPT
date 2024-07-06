@@ -1,6 +1,4 @@
-﻿using NexusGPT.Entities;
-
-namespace NexusGPT.WebApplication.Models.ResultViewModel;
+﻿namespace NexusGPT.WebApplication.Models.ViewModels;
 
 public class TopicMessageViewModel
 {

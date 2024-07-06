@@ -5,7 +5,7 @@ using NexusGPT.UseCase.Port.In;
 using NexusGPT.WebApplication.Hubs;
 using NexusGPT.WebApplication.Infrastructure.ExceptionFilters;
 using NexusGPT.WebApplication.Models.Parameters;
-using NexusGPT.WebApplication.Models.ResultViewModel;
+using NexusGPT.WebApplication.Models.ViewModels;
 
 namespace NexusGPT.WebApplication.Controllers;
 
@@ -170,14 +170,14 @@ public class TopicController : ControllerBase
     /// 取得聊天室列表
     /// </summary>
     [HttpGet]
-    [ProducesResponseType<ResultViewModel<IEnumerable<TopicResultViewModel>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ResultViewModel<IEnumerable<TopicViewModel>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetListAsync()
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var messageChannels = await _topicQueryService.GetListAsync(memberId);
 
         var viewModel = messageChannels.Select(x =>
-            new TopicResultViewModel
+            new TopicViewModel
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -185,7 +185,7 @@ public class TopicController : ControllerBase
                 LastMessageCreateTime = x.LastMessageCreateTime
             }).OrderByDescending(x => x.LastMessageCreateTime);
 
-        return Ok(new ResultViewModel<IEnumerable<TopicResultViewModel>>
+        return Ok(new ResultViewModel<IEnumerable<TopicViewModel>>
         {
             StatuesCode = 200,
             StatusMessage = "OK",
@@ -235,7 +235,7 @@ public class TopicController : ControllerBase
     /// <param name="parameter"></param>
     /// <returns></returns>
     [HttpPost("import")]
-    [ProducesResponseType<ResultViewModel<Guid>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ResultViewModel<ShareTopicViewModel>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
@@ -267,22 +267,26 @@ public class TopicController : ControllerBase
         }
 
         await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicImportResult",
-            new ResultViewModel<object>
+            new ResultViewModel<ShareTopicViewModel>
             {
                 StatuesCode = 200,
                 StatusMessage = "OK",
-                Data = new
+                Data = new ShareTopicViewModel
                 {
-                    TopicId = Guid.NewGuid(),
-                    Title = parameter.Title
+                    TopicId = shareTopicResultModel.TopicId,
+                    Title = shareTopicResultModel.Title
                 }
             });
 
-        return Ok(new ResultViewModel<Guid>
+        return Ok(new ResultViewModel<ShareTopicViewModel>
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = Guid.NewGuid()
+            Data = new ShareTopicViewModel
+            {
+                TopicId = shareTopicResultModel.TopicId,
+                Title = shareTopicResultModel.Title
+            }
         });
     }
 
@@ -292,6 +296,7 @@ public class TopicController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpPost("share/{id:guid}")]
+    [ProducesResponseType<ResultViewModel<ShareTopicViewModel>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> ShareAsync(Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
@@ -307,22 +312,26 @@ public class TopicController : ControllerBase
         }
 
         await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicShareResult",
-            new ResultViewModel<object>
+            new ResultViewModel<ShareTopicViewModel>
             {
                 StatuesCode = 200,
                 StatusMessage = "OK",
-                Data = new
+                Data = new ShareTopicViewModel
                 {
                     TopicId = shareTopicResultModel.TopicId,
                     Title = shareTopicResultModel.Title
                 }
             });
 
-        return Ok(new ResultViewModel<Guid>
+        return Ok(new ResultViewModel<ShareTopicViewModel>
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = shareTopicResultModel.TopicId
+            Data = new ShareTopicViewModel
+            {
+                TopicId = shareTopicResultModel.TopicId,
+                Title = shareTopicResultModel.Title
+            }
         });
     }
 

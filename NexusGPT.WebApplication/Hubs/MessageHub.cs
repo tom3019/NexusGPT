@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using NexusGPT.UseCase.Port.In.AddMessage;
 using NexusGPT.WebApplication.Models.Parameters;
-using NexusGPT.WebApplication.Models.ResultViewModel;
+using NexusGPT.WebApplication.Models.ViewModels;
 using SignalRSwaggerGen.Attributes;
 
 namespace NexusGPT.WebApplication.Hubs;

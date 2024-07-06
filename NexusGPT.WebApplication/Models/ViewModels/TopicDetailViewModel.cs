@@ -1,4 +1,4 @@
-﻿namespace NexusGPT.WebApplication.Models.ResultViewModel;
+﻿namespace NexusGPT.WebApplication.Models.ViewModels;
 
 public class TopicDetailViewModel
 {

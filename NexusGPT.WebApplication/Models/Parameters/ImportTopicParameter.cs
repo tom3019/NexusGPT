@@ -1,6 +1,4 @@
-﻿using NexusGPT.WebApplication.Models.ResultViewModel;
-
-namespace NexusGPT.WebApplication.Models.Parameters;
+﻿namespace NexusGPT.WebApplication.Models.Parameters;
 
 /// <summary>
 /// ImportTopicParameter
