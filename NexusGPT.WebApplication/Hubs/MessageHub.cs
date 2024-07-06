@@ -40,7 +40,7 @@ public class MessageHub : Hub
                                SystemMessage = "你是一個智慧AI"
                            }))
         {
-            await Clients.Caller.SendAsync("SendMessageResult",
+            await Clients.User(memberId.ToString()).SendAsync("SendMessageResult",
                 new ResultViewModel<MessageViewModel>
                 {
                     StatuesCode = 200,
@@ -70,7 +70,7 @@ public class MessageHub : Hub
                 TopicId = parameter.TopicId
             });
         
-        await Clients.Caller.SendAsync("SendImageMessageResult",
+        await Clients.User(memberId.ToString()).SendAsync("SendImageMessageResult",
             new ResultViewModel<MessageViewModel>
             {
                 StatuesCode = 200,
