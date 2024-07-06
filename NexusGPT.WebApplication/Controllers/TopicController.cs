@@ -89,7 +89,7 @@ public class TopicController : ControllerBase
     /// <param name="parameter">The parameter.</param>
     [HttpPatch("{id:guid}")]
     [ProducesResponseType<ResultViewModel<bool>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateTitleAsync([FromRoute] Guid id, [FromBody] TopicParameter parameter)
+    public async Task<IActionResult> ChangeTitleAsync([FromRoute] Guid id, [FromBody] TopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var success = await _changeTitleService.HandleAsync(id, memberId, parameter.Title);

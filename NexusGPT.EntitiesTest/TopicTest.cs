@@ -91,7 +91,7 @@ public class TopicTest
     }
     
     [Fact]
-    public void ChangTitleTest_InputNewTitle_ShouldChangeTitle()
+    public void ChangeTitleTest_InputNewTitle_ShouldChangeTitle()
     {
         // Arrange
         var id = Guid.NewGuid();
