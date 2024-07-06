@@ -91,7 +91,7 @@ public class AddImageMessageServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenImageCreateResponseIsSuccessful_ReturnFilePath()
+    public async Task HandlerAsync_WhenImageCreateResponseIsSuccessful_ReturnMarkDownFilePath()
     {
         // Arrange
         var input = new AddImageMessageInput
@@ -125,7 +125,8 @@ public class AddImageMessageServiceTest
         var act = await service.HandlerAsync(input);
         
         // Assert
-        act.Should().Be(imageUrl);
+        var mdUrl = $"![Test]({imageUrl})";
+        act.Should().Be(mdUrl);
         _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<Topic>());
         
     }
