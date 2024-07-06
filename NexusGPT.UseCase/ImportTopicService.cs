@@ -9,19 +9,19 @@ namespace NexusGPT.UseCase;
 /// <summary>
 /// 匯入頻道服務
 /// </summary>
-public class ImportChannelService : IImportChannelService
+public class ImportTopicService : IImportTopicService
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly TimeProvider _timeProvider;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IDomainEventBus _domainEventBus;
 
-    public ImportChannelService(IMessageChannelOutPort messageChannelOutPort,
+    public ImportTopicService(ITopicOutPort topicOutPort,
         TimeProvider timeProvider,
         IMessageOutPort messageOutPort,
         IDomainEventBus domainEventBus)
     {
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
         _timeProvider = timeProvider;
         _messageOutPort = messageOutPort;
         _domainEventBus = domainEventBus;
@@ -36,14 +36,14 @@ public class ImportChannelService : IImportChannelService
     /// <exception cref="MessageChannelNotFoundException"></exception>
     public async Task<Guid> HandlerAsync(Guid id, Guid memberId)
     {
-        var messageChannel = await _messageChannelOutPort.GetAsync(id);
+        var messageChannel = await _topicOutPort.GetAsync(id);
         if (messageChannel.IsNull())
         {
             throw new MessageChannelNotFoundException("找不到訊息頻道");
         }
 
-        var newId = await _messageChannelOutPort.GenerateIdAsync();
-        var newMessageChannel = new MessageChannel(newId, memberId, messageChannel.Title,
+        var newId = await _topicOutPort.GenerateIdAsync();
+        var newMessageChannel = new Topic(newId, memberId, messageChannel.Title,
             _timeProvider);
 
         foreach (var messageChannelMessage in messageChannel.Messages.OrderBy(x=>x.CreateTime))
@@ -57,7 +57,7 @@ public class ImportChannelService : IImportChannelService
                 _timeProvider);
         }
 
-        var success = await _messageChannelOutPort.SaveAsync(newMessageChannel);
+        var success = await _topicOutPort.SaveAsync(newMessageChannel);
         if (success)
         {
             await _domainEventBus.DispatchDomainEventsAsync(messageChannel);

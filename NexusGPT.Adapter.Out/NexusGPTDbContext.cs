@@ -4,18 +4,25 @@ using NexusGPT.Entities;
 
 namespace NexusGPT.Adapter.Out;
 
-public class MessageChannelDbContext : DbContext
+/// <summary>
+/// NexusGPTDbContext
+/// </summary>
+public class NexusGptDbContext : DbContext
 {
-    public MessageChannelDbContext(DbContextOptions<MessageChannelDbContext> options)
+    public NexusGptDbContext(DbContextOptions<NexusGptDbContext> options)
         : base(options)
     {
     }
 
+    /// <summary>
+    /// OnModelCreating
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-        modelBuilder.ApplyConfiguration(new MessageChannelConfigurations());
+        modelBuilder.ApplyConfiguration(new TopicConfigurations());
     }
 
 
@@ -25,5 +32,5 @@ public class MessageChannelDbContext : DbContext
     /// <value>
     /// The MessageChannels.
     /// </value>
-    public virtual DbSet<MessageChannel> MessageChannels { get; set; }
+    public virtual DbSet<Topic> Topics { get; set; }
 }

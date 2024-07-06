@@ -2,7 +2,7 @@ using NexusGPT.Entities;
 
 namespace NexusGPT.UseCase.Port.Out;
 
-public interface IMessageChannelOutPort
+public interface ITopicOutPort
 {
     /// <summary>
     /// 產生Id
@@ -13,45 +13,45 @@ public interface IMessageChannelOutPort
     /// <summary>
     /// 儲存
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    Task<bool> SaveAsync(MessageChannel messageChannel);
+    Task<bool> SaveAsync(Topic topic);
 
     /// <summary>
     /// 取得MessageChannel
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    Task<MessageChannel> GetAsync(Guid channelId, Guid memberId);
+    Task<Topic> GetAsync(Guid topicId, Guid memberId);
 
     /// <summary>
     /// 更新MessageChannel
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    Task<bool> UpdateAsync(MessageChannel messageChannel);
+    Task<bool> UpdateAsync(Topic topic);
 
     /// <summary>
     /// 刪除頻道
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(MessageChannel messageChannel);
+    Task<bool> DeleteAsync(Topic topic);
 
     /// <summary>
     /// 取得清單
     /// </summary>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    Task<IEnumerable<MessageChannelDataModel>> GetListAsync(Guid memberId);
+    Task<IEnumerable<TopicDataModel>> GetListAsync(Guid memberId);
 
     /// <summary>
     /// 取得MessageChannel
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <returns></returns>
-    Task<MessageChannel> GetAsync(Guid channelId);
+    Task<Topic> GetAsync(Guid topicId);
 
     /// <summary>
     /// 搜尋聊天室
@@ -59,6 +59,6 @@ public interface IMessageChannelOutPort
     /// <param name="memberId"></param>
     /// <param name="keyword"></param>
     /// <returns></returns>
-    Task<IEnumerable<SearchMessageChannelDataModel>> SearchMessageChannelAsync
+    Task<IEnumerable<SearchTopicDataModel>> SearchMessageChannelAsync
         (Guid memberId, string keyword);
 }

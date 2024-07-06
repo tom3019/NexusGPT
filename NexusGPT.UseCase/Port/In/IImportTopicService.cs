@@ -2,14 +2,14 @@ using NexusGPT.UseCase.Exceptions;
 
 namespace NexusGPT.UseCase.Port.In;
 
-public interface IDeleteMessageChannelService
+public interface IImportTopicService
 {
     /// <summary>
-    /// 刪除訊息頻道
+    /// 處理程序
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="id"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
     /// <exception cref="MessageChannelNotFoundException"></exception>
-    Task<bool> HandleAsync(Guid channelId, Guid memberId);
+    Task<Guid> HandlerAsync(Guid id, Guid memberId);
 }

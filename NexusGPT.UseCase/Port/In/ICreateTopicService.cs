@@ -3,7 +3,7 @@ namespace NexusGPT.UseCase.Port.In;
 /// <summary>
 /// 建立訊息頻道服務
 /// </summary>
-public interface ICreateMessageChannelService
+public interface ICreateTopicService
 {
     /// <summary>
     /// 處理程序

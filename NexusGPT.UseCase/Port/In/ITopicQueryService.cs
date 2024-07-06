@@ -3,22 +3,22 @@ using NexusGPT.UseCase.Port.Out;
 
 namespace NexusGPT.UseCase.Port.In;
 
-public interface IMessageChannelQueryService
+public interface ITopicQueryService
 {
     /// <summary>
     /// 取得聊天室列表
     /// </summary>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    Task<IEnumerable<MessageChannelDataModel>> GetListAsync(Guid memberId);
+    Task<IEnumerable<TopicDataModel>> GetListAsync(Guid memberId);
 
     /// <summary>
     /// 取得聊天室詳細資訊
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    Task<MessageChannel> GetDetailAsync(Guid channelId, Guid memberId);
+    Task<Topic> GetDetailAsync(Guid topicId, Guid memberId);
 
     /// <summary>
     /// 搜尋聊天室
@@ -26,5 +26,5 @@ public interface IMessageChannelQueryService
     /// <param name="memberId"></param>
     /// <param name="keyword"></param>
     /// <returns></returns>
-    Task<IEnumerable<SearchMessageChannelDataModel>> SearchTopicAsync(Guid memberId, string keyword);
+    Task<IEnumerable<SearchTopicDataModel>> SearchTopicAsync(Guid memberId, string keyword);
 }

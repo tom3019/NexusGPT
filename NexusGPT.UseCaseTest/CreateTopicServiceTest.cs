@@ -9,23 +9,23 @@ using NSubstitute;
 
 namespace NexusGPT.UseCaseTest;
 
-public class CreateMessageChannelServiceTest
+public class CreateTopicServiceTest
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly TimeProvider _timeProvider;
     private readonly IDomainEventBus _domainEventBus;
     
 
-    public CreateMessageChannelServiceTest()
+    public CreateTopicServiceTest()
     {
-        _messageChannelOutPort  = Substitute.For<IMessageChannelOutPort>();
+        _topicOutPort  = Substitute.For<ITopicOutPort>();
         _timeProvider = new FakeTimeProvider();
         _domainEventBus = Substitute.For<IDomainEventBus>();
     }
 
-    public ICreateMessageChannelService GetSystemUnderTest()
+    public ICreateTopicService GetSystemUnderTest()
     {
-        return new CreateMessageChannelService(_messageChannelOutPort,_timeProvider,_domainEventBus);
+        return new CreateTopicService(_topicOutPort,_timeProvider,_domainEventBus);
     }
     
     [Fact]
@@ -33,8 +33,8 @@ public class CreateMessageChannelServiceTest
     {
         var memberId = Guid.NewGuid();
         var channelId = Guid.NewGuid();
-        _messageChannelOutPort.GenerateIdAsync().Returns(channelId);
-        _messageChannelOutPort.SaveAsync(Arg.Any<MessageChannel>()).Returns(true);
+        _topicOutPort.GenerateIdAsync().Returns(channelId);
+        _topicOutPort.SaveAsync(Arg.Any<Topic>()).Returns(true);
 
         var title = "title";
         
@@ -42,15 +42,15 @@ public class CreateMessageChannelServiceTest
         var actual = await sut.HandlerAsync(memberId,title);
         
         actual.Should().Be(channelId);
-         _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<MessageChannel>());
+         _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<Topic>());
     }
 
     [Fact]
     public async Task HandlerAsyncTest_輸入MemberId_建立訊息頻道失敗_傳回False()
     {
         var memberId = Guid.NewGuid();
-        _messageChannelOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
-        _messageChannelOutPort.SaveAsync(Arg.Any<MessageChannel>()).Returns(false);
+        _topicOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
+        _topicOutPort.SaveAsync(Arg.Any<Topic>()).Returns(false);
         var title = "title";
         
         var sut = GetSystemUnderTest();

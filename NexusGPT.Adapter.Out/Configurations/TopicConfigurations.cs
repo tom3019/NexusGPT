@@ -4,11 +4,11 @@ using NexusGPT.Entities;
 
 namespace NexusGPT.Adapter.Out.Configurations;
 
-public class MessageChannelConfigurations : IEntityTypeConfiguration<MessageChannel>
+public class TopicConfigurations : IEntityTypeConfiguration<Topic>
 {
-    public void Configure(EntityTypeBuilder<MessageChannel> builder)
+    public void Configure(EntityTypeBuilder<Topic> builder)
     {
-        builder.ToTable("MessageChannels");
+        builder.ToTable("Topics");
         
         builder.Property(x=>x.Id)
             .HasColumnName("Id")

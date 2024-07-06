@@ -2,7 +2,7 @@ using NexusGPT.SeedWork;
 
 namespace NexusGPT.Entities;
 
-public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
+public class Topic : AggregateRoot<TopicId>, INullObject
 {
     /// <summary>
     /// 訊息
@@ -58,13 +58,13 @@ public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
     /// <param name="memberId"></param>
     /// <param name="title"></param>
     /// <param name="timeProvider"></param>
-    public MessageChannel(MessageChannelId id,
+    public Topic(TopicId id,
         MemberId memberId,
         string title,
         TimeProvider timeProvider)
     {
         Messages = new List<Message>();
-        Apply(new CreateMessageChannelEvent(id, memberId, title, timeProvider.GetLocalNow()));
+        Apply(new CreateTopicEvent(id, memberId, title, timeProvider.GetLocalNow()));
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
     
     public void ChangeTitle(string title)
     {
-        Apply(new ChangeMessageChannelTitleEvent(Id, title));
+        Apply(new ChangeTopicTitleEvent(Id, title));
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
     {
         switch (domainEvent)
         {
-            case CreateMessageChannelEvent e:
+            case CreateTopicEvent e:
                 Id = e.Id;
                 MemberId = e.MemberId;
                 CreateTime = e.CreateTime;
@@ -118,7 +118,7 @@ public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
                 Messages.Add(message);
                 break;
             
-            case ChangeMessageChannelTitleEvent e:
+            case ChangeTopicTitleEvent e:
                 Title = e.Title;
                 break;
         }
@@ -128,20 +128,20 @@ public class MessageChannel : AggregateRoot<MessageChannelId>, INullObject
     {
     }
 
-    protected MessageChannel()
+    protected Topic()
     {
     }
 
-    private static readonly NullMessageChannel? _null;
+    private static readonly NullTopic? _null;
 
-    public static MessageChannel Null = _null ??= new NullMessageChannel();
+    public static Topic Null = _null ??= new NullTopic();
 
     public virtual bool IsNull()
     {
         return false;
     }
 
-    private class NullMessageChannel : MessageChannel
+    private class NullTopic : Topic
     {
         public override bool IsNull()
         {

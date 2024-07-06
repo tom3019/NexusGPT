@@ -17,26 +17,26 @@ namespace NexusGPT.WebApplication.Controllers;
 [MessageChannelNotFoundExceptionFilter]
 public class TopicController : ControllerBase
 {
-    private readonly ICreateMessageChannelService _createMessageChannelService;
+    private readonly ICreateTopicService _createTopicService;
     private readonly IChangeTitleService _changeTitleService;
-    private readonly IDeleteMessageChannelService _deleteMessageChannelService;
-    private readonly IMessageChannelQueryService _messageChannelQueryService;
+    private readonly IDeleteTopicService _deleteTopicService;
+    private readonly ITopicQueryService _topicQueryService;
     private readonly IHubContext<TopicHub> _hubContext;
-    private readonly IImportChannelService _importChannelService;
+    private readonly IImportTopicService _importTopicService;
 
-    public TopicController(ICreateMessageChannelService createMessageChannelService,
+    public TopicController(ICreateTopicService createTopicService,
         IChangeTitleService changeTitleService,
-        IDeleteMessageChannelService deleteMessageChannelService,
-        IMessageChannelQueryService messageChannelQueryService,
+        IDeleteTopicService deleteTopicService,
+        ITopicQueryService topicQueryService,
         IHubContext<TopicHub> hubContext,
-        IImportChannelService importChannelService)
+        IImportTopicService importTopicService)
     {
-        _createMessageChannelService = createMessageChannelService;
+        _createTopicService = createTopicService;
         _changeTitleService = changeTitleService;
-        _deleteMessageChannelService = deleteMessageChannelService;
-        _messageChannelQueryService = messageChannelQueryService;
+        _deleteTopicService = deleteTopicService;
+        _topicQueryService = topicQueryService;
         _hubContext = hubContext;
-        _importChannelService = importChannelService;
+        _importTopicService = importTopicService;
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] TopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var channelId = await _createMessageChannelService.HandlerAsync(memberId, parameter.Title);
-        if (channelId == Guid.Empty)
+        var topicId = await _createTopicService.HandlerAsync(memberId, parameter.Title);
+        if (topicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
             {
@@ -69,7 +69,7 @@ public class TopicController : ControllerBase
                 StatusMessage = "OK",
                 Data = new
                 {
-                    TopicId = channelId,
+                    TopicId = topicId,
                     Title = parameter.Title
                 }
             });
@@ -78,7 +78,7 @@ public class TopicController : ControllerBase
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = channelId
+            Data = topicId
         });
     }
 
@@ -132,7 +132,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var success = await _deleteMessageChannelService.HandleAsync(id, memberId);
+        var success = await _deleteTopicService.HandleAsync(id, memberId);
 
         if (!success)
         {
@@ -171,7 +171,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> GetListAsync()
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var messageChannels = await _messageChannelQueryService.GetListAsync(memberId);
+        var messageChannels = await _topicQueryService.GetListAsync(memberId);
 
         var viewModel = messageChannels.Select(x =>
             new TopicResultViewModel
@@ -198,7 +198,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> GetDetailAsync(Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var messageChannel = await _messageChannelQueryService.GetDetailAsync(id, memberId);
+        var messageChannel = await _topicQueryService.GetDetailAsync(id, memberId);
 
         var viewModel = new TopicDetailViewModel
         {
@@ -235,7 +235,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var channelId = await _importChannelService.HandlerAsync(parameter.TopicId, memberId);
+        var channelId = await _importTopicService.HandlerAsync(parameter.TopicId, memberId);
         if (channelId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
@@ -277,7 +277,7 @@ public class TopicController : ControllerBase
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var searchMessageChannelDataModels =
-            await _messageChannelQueryService.SearchTopicAsync(memberId, parameter.Keyword);
+            await _topicQueryService.SearchTopicAsync(memberId, parameter.Keyword);
 
         var viewModels =
             searchMessageChannelDataModels.Select(x =>

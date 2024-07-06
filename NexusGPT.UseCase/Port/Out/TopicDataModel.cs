@@ -1,6 +1,6 @@
 namespace NexusGPT.UseCase.Port.Out;
 
-public class MessageChannelDataModel
+public class TopicDataModel
 {
     /// <summary>
     /// Id

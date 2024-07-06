@@ -3,7 +3,7 @@ using NexusGPT.Entities;
 
 namespace NexusGPT.EntitiesTest;
 
-public class MessageChannelIdTest
+public class TopicIdTest
 {
     [Fact]
     public void MessageChannelId_WhenValueIsEmpty_ThrowsArgumentNullException()
@@ -12,7 +12,7 @@ public class MessageChannelIdTest
         var value = Guid.Empty;
 
         // Act
-        Action act = () => new MessageChannelId(value);
+        Action act = () => new TopicId(value);
 
         // Assert
         act.Should().Throw<ArgumentNullException>()
@@ -26,7 +26,7 @@ public class MessageChannelIdTest
         var value = Guid.NewGuid();
 
         // Act
-        var memberId = new MessageChannelId(value);
+        var memberId = new TopicId(value);
 
         // Assert
         memberId.Value.Should().Be(value);

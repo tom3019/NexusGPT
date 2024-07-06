@@ -34,7 +34,7 @@ public class MessageHub : Hub
         await foreach (var messageStream in _addMessageAsStreamService.HandlerAsync(
                            new AddMessageInput
                            {
-                               ChannelId = parameter.TopicId,
+                               TopicId = parameter.TopicId,
                                MemberId = memberId,
                                Question = parameter.Message,
                                SystemMessage = "你是一個智慧AI"
@@ -67,7 +67,7 @@ public class MessageHub : Hub
             {
                 Message = parameter.Message,
                 MemberId = memberId,
-                ChannelId = parameter.TopicId
+                TopicId = parameter.TopicId
             });
         
         await Clients.Caller.SendAsync("SendImageMessageResult",

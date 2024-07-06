@@ -33,14 +33,14 @@ public static class ServiceCollectionExtensions
     /// <returns></returns>
     private static IServiceCollection AddNexusGPTInput(this IServiceCollection service)
     {
-        service.AddScoped<ICreateMessageChannelService, CreateMessageChannelService>();
+        service.AddScoped<ICreateTopicService, CreateTopicService>();
         service.AddScoped<IAddMessageService, AddMessageService>();
         service.AddScoped<IAddMessageAsStreamService, AddMessageAsStreamService>();
         service.AddScoped<IAddImageMessageService, AddImageMessageService>();
         service.AddScoped<IChangeTitleService, ChangeTitleService>();
-        service.AddScoped<IDeleteMessageChannelService, DeleteMessageChannelService>();
-        service.AddScoped<IMessageChannelQueryService, MessageChannelQueryService>();
-        service.AddScoped<IImportChannelService, ImportChannelService>();
+        service.AddScoped<IDeleteTopicService, DeleteTopicService>();
+        service.AddScoped<ITopicQueryService, TopicQueryService>();
+        service.AddScoped<IImportTopicService, ImportTopicService>();
         return service;
     }
     
@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
     /// <returns></returns>
     private static IServiceCollection AddNexusGPTOutput(this IServiceCollection service)
     {
-        service.AddScoped<IMessageChannelOutPort, MessageChannelRepository>();
+        service.AddScoped<ITopicOutPort, TopicRepository>();
         service.AddScoped<IMessageOutPort, MessageRepository>();
         service.AddScoped<IImageStorageOutPort, LocalStorageRepository>();
         return service;

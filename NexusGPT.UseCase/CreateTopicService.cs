@@ -7,17 +7,17 @@ using NexusGPT.UseCase.Port.Out;
 namespace NexusGPT.UseCase;
 
 /// <inheritdoc />
-public class CreateMessageChannelService : ICreateMessageChannelService
+public class CreateTopicService : ICreateTopicService
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly TimeProvider _timeProvider;
     private readonly IDomainEventBus _domainEventBus;
 
-    public CreateMessageChannelService(IMessageChannelOutPort messageChannelOutPort,
+    public CreateTopicService(ITopicOutPort topicOutPort,
         TimeProvider timeProvider,
         IDomainEventBus domainEventBus)
     {
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
         _timeProvider = timeProvider;
         _domainEventBus = domainEventBus;
     }
@@ -30,20 +30,20 @@ public class CreateMessageChannelService : ICreateMessageChannelService
     /// <returns></returns>
     public async Task<Guid> HandlerAsync(Guid memberId, string title)
     {
-        var messageChannels = await _messageChannelOutPort.GetListAsync(memberId);
+        var messageChannels = await _topicOutPort.GetListAsync(memberId);
         if (messageChannels.Count() >= 5)
         {
             throw new MessageChannelMaxCountException("超過最大聊天室數量");
         }
 
-        var channelId = await _messageChannelOutPort.GenerateIdAsync();
-        var messageChannel = new MessageChannel(channelId, memberId, title, _timeProvider);
+        var topicId = await _topicOutPort.GenerateIdAsync();
+        var messageChannel = new Topic(topicId, memberId, title, _timeProvider);
 
-        var success = await _messageChannelOutPort.SaveAsync(messageChannel);
+        var success = await _topicOutPort.SaveAsync(messageChannel);
         if (success)
         {
             await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
-            return channelId;
+            return topicId;
         }
         
         return Guid.Empty;

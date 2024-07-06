@@ -4,7 +4,7 @@ using NexusGPT.Entities;
 
 namespace NexusGPT.EntitiesTest;
 
-public class MessageChannelTest
+public class TopicTest
 {
     [Fact]
     public void CreateMessageChannelTest_InputIdAndMemberId_ShouldCreateMessageChannel()
@@ -19,7 +19,7 @@ public class MessageChannelTest
         var title = "title";
         
         // Act
-        var actual = new MessageChannel(id, memberId, title,timeProvider);
+        var actual = new Topic(id, memberId, title,timeProvider);
 
         // Assert
         actual.Id.Value.Should().Be(id);
@@ -39,7 +39,7 @@ public class MessageChannelTest
         timeProvider.SetUtcNow(localDateTimeNow);
         var title = "title";
 
-        var messageChannel = new MessageChannel(id, memberId, title,timeProvider);
+        var messageChannel = new Topic(id, memberId, title,timeProvider);
         var messageId = new MessageId(Guid.NewGuid());
 
 
@@ -60,7 +60,7 @@ public class MessageChannelTest
         messageChannel.Messages.First().Id.Value.Should().Be(messageId);
         messageChannel.Messages.First().QuestionTokenCount.Should().Be(questionTokenCount);
         messageChannel.Messages.First().AnswerTokenCount.Should().Be(answerTokenCount);
-        messageChannel.Messages.First().ChannelId.Should().Be(id);
+        messageChannel.Messages.First().TopicId.Should().Be(id);
         messageChannel.Messages.First().TotalTokenCount.Should().Be(totalTokenCount);
 
         messageChannel.TotalQuestionTokenCount.Should().Be(questionTokenCount);

@@ -2,11 +2,11 @@ using NexusGPT.SeedWork;
 
 namespace NexusGPT.Entities;
 
-public record MessageChannelId:ValueObject<MessageChannelId>
+public record TopicId:ValueObject<TopicId>
 {
     public Guid Value { get; }
 
-    public MessageChannelId(Guid value)
+    public TopicId(Guid value)
     {
         if (value == Guid.Empty)
         {
@@ -15,10 +15,10 @@ public record MessageChannelId:ValueObject<MessageChannelId>
         
         Value = value;
     }
-    public static implicit operator Guid(MessageChannelId self) => self.Value;
-    public static implicit operator MessageChannelId(Guid self) => new(self);
+    public static implicit operator Guid(TopicId self) => self.Value;
+    public static implicit operator TopicId(Guid self) => new(self);
 
-    protected MessageChannelId()
+    protected TopicId()
     {
         
     }

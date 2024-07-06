@@ -10,7 +10,7 @@ using NexusGPT.Adapter.Out;
 
 namespace NexusGPT.Adapter.Out.Migrations
 {
-    [DbContext(typeof(MessageChannelDbContext))]
+    [DbContext(typeof(NexusGptDbContext))]
     partial class MessageChannelDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

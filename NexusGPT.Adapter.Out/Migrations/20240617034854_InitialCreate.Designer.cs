@@ -11,7 +11,7 @@ using NexusGPT.Adapter.Out;
 
 namespace NexusGPT.Adapter.Out.Migrations
 {
-    [DbContext(typeof(MessageChannelDbContext))]
+    [DbContext(typeof(NexusGptDbContext))]
     [Migration("20240617034854_InitialCreate")]
     partial class InitialCreate
     {

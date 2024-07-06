@@ -2,10 +2,10 @@ using NexusGPT.SeedWork;
 
 namespace NexusGPT.Entities;
 
-public record CreateMessageChannelEvent(Guid Id, Guid MemberId, string Title,DateTimeOffset CreateTime)
+public record CreateTopicEvent(Guid Id, Guid MemberId, string Title,DateTimeOffset CreateTime)
     : DomainEvent;
 
-public record AddMessageEvent(Guid ChannelId, 
+public record AddMessageEvent(Guid TopicId, 
     string Answer, 
     string Question,
     Guid MessageId,
@@ -14,4 +14,4 @@ public record AddMessageEvent(Guid ChannelId,
     DateTimeOffset CreateTime)
     : DomainEvent;
     
-public record ChangeMessageChannelTitleEvent(MessageChannelId Id, string Title) : DomainEvent;
+public record ChangeTopicTitleEvent(TopicId Id, string Title) : DomainEvent;

@@ -4,11 +4,11 @@ using NexusGPT.UseCase.Port.Out;
 
 namespace NexusGPT.Adapter.Out.Implements;
 
-public class MessageChannelRepository : IMessageChannelOutPort
+public class TopicRepository : ITopicOutPort
 {
-    private readonly MessageChannelDbContext _context;
+    private readonly NexusGptDbContext _context;
 
-    public MessageChannelRepository(MessageChannelDbContext context)
+    public TopicRepository(NexusGptDbContext context)
     {
         _context = context;
     }
@@ -36,8 +36,8 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// <returns></returns>
     private async Task<bool> IsExistAsync(Guid channelId)
     {
-        var count = await _context.MessageChannels
-            .Where(x => x.Id == new MessageChannelId(channelId))
+        var count = await _context.Topics
+            .Where(x => x.Id == new TopicId(channelId))
             .Include(x => x.Messages)
             .CountAsync();
 
@@ -47,11 +47,11 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// <summary>
     /// 儲存
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    public async Task<bool> SaveAsync(MessageChannel messageChannel)
+    public async Task<bool> SaveAsync(Topic topic)
     {
-        _context.MessageChannels.Add(messageChannel);
+        _context.Topics.Add(topic);
         var successCount = await _context.SaveChangesAsync();
         return successCount > 0;
     }
@@ -59,43 +59,43 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// <summary>
     /// 取得MessageChannel
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    public async Task<MessageChannel> GetAsync(Guid channelId, Guid memberId)
+    public async Task<Topic> GetAsync(Guid topicId, Guid memberId)
     {
-        var messageChannel = await _context.MessageChannels
-            .Where(x => x.Id == new MessageChannelId(channelId))
+        var messageChannel = await _context.Topics
+            .Where(x => x.Id == new TopicId(topicId))
             .Where(x => x.MemberId == new MemberId(memberId))
             .Include(x => x.Messages)
             .FirstOrDefaultAsync();
 
-        return messageChannel ?? MessageChannel.Null;
+        return messageChannel ?? Topic.Null;
     }
 
     /// <summary>
     /// 取得MessageChannel
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <returns></returns>
-    public async Task<MessageChannel> GetAsync(Guid channelId)
+    public async Task<Topic> GetAsync(Guid topicId)
     {
-        var messageChannel = await _context.MessageChannels
-            .Where(x => x.Id == new MessageChannelId(channelId))
+        var messageChannel = await _context.Topics
+            .Where(x => x.Id == new TopicId(topicId))
             .Include(x => x.Messages)
             .FirstOrDefaultAsync();
 
-        return messageChannel ?? MessageChannel.Null;
+        return messageChannel ?? Topic.Null;
     }
 
     /// <summary>
     /// 更新MessageChannel
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    public async Task<bool> UpdateAsync(MessageChannel messageChannel)
+    public async Task<bool> UpdateAsync(Topic topic)
     {
-        _context.MessageChannels.Update(messageChannel);
+        _context.Topics.Update(topic);
         var successCount = await _context.SaveChangesAsync();
         return successCount > 0;
     }
@@ -103,11 +103,11 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// <summary>
     /// 刪除頻道
     /// </summary>
-    /// <param name="messageChannel"></param>
+    /// <param name="topic"></param>
     /// <returns></returns>
-    public async Task<bool> DeleteAsync(MessageChannel messageChannel)
+    public async Task<bool> DeleteAsync(Topic topic)
     {
-        _context.MessageChannels.Remove(messageChannel);
+        _context.Topics.Remove(topic);
         var successCount = await _context.SaveChangesAsync();
         return successCount > 0;
     }
@@ -117,12 +117,12 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// </summary>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<MessageChannelDataModel>> GetListAsync(Guid memberId)
+    public async Task<IEnumerable<TopicDataModel>> GetListAsync(Guid memberId)
     {
-        var messageChannels = await _context.MessageChannels
+        var messageChannels = await _context.Topics
             .Where(x => x.MemberId == new MemberId(memberId))
             .Include(x => x.Messages)
-            .Select(x => new MessageChannelDataModel
+            .Select(x => new TopicDataModel
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -142,17 +142,17 @@ public class MessageChannelRepository : IMessageChannelOutPort
     /// <param name="memberId"></param>
     /// <param name="keyword"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<SearchMessageChannelDataModel>> SearchMessageChannelAsync
+    public async Task<IEnumerable<SearchTopicDataModel>> SearchMessageChannelAsync
         (Guid memberId, string keyword)
     {
 
-        var messageChannels = await _context.MessageChannels
+        var messageChannels = await _context.Topics
             .Where(x => x.MemberId == new MemberId(memberId))
             .Include(x => x.Messages)
             .Where(x => x.Title.Contains(keyword) 
                         || x.Messages.Any(y=>y.Question.Contains(keyword))
                         || x.Messages.Any(y=>y.Answer.Contains(keyword)))
-            .Select(x => new SearchMessageChannelDataModel
+            .Select(x => new SearchTopicDataModel
             {
                 Id = x.Id,
                 MessageIds = x.Messages

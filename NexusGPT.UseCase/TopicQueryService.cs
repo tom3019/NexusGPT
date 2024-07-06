@@ -5,13 +5,13 @@ using NexusGPT.UseCase.Port.Out;
 
 namespace NexusGPT.UseCase;
 
-public class MessageChannelQueryService : IMessageChannelQueryService
+public class TopicQueryService : ITopicQueryService
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
 
-    public MessageChannelQueryService(IMessageChannelOutPort messageChannelOutPort)
+    public TopicQueryService(ITopicOutPort topicOutPort)
     {
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
     }
 
     /// <summary>
@@ -19,21 +19,21 @@ public class MessageChannelQueryService : IMessageChannelQueryService
     /// </summary>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<MessageChannelDataModel>> GetListAsync(Guid memberId)
+    public async Task<IEnumerable<TopicDataModel>> GetListAsync(Guid memberId)
     {
-        var messageChannels = await _messageChannelOutPort.GetListAsync(memberId);
+        var messageChannels = await _topicOutPort.GetListAsync(memberId);
         return messageChannels;
     }
     
     /// <summary>
     /// 取得聊天室詳細資訊
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    public async Task<MessageChannel> GetDetailAsync(Guid channelId,Guid memberId)
+    public async Task<Topic> GetDetailAsync(Guid topicId,Guid memberId)
     {
-        var messageChannel = await _messageChannelOutPort.GetAsync(channelId, memberId);
+        var messageChannel = await _topicOutPort.GetAsync(topicId, memberId);
         if (messageChannel.IsNull())
         {
             throw new MessageChannelNotFoundException("找不到訊息頻道");
@@ -48,9 +48,9 @@ public class MessageChannelQueryService : IMessageChannelQueryService
     /// <param name="memberId"></param>
     /// <param name="keyword"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<SearchMessageChannelDataModel>> SearchTopicAsync(Guid memberId, string keyword)
+    public async Task<IEnumerable<SearchTopicDataModel>> SearchTopicAsync(Guid memberId, string keyword)
     {
-        var searchMessageChannelDataModels = await _messageChannelOutPort.SearchMessageChannelAsync(memberId, keyword);
+        var searchMessageChannelDataModels = await _topicOutPort.SearchMessageChannelAsync(memberId, keyword);
         return searchMessageChannelDataModels;
     }
 

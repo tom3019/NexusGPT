@@ -17,7 +17,7 @@ namespace NexusGPT.UseCaseTest;
 public class AddImageMessageServiceTest
 {
     private readonly IOpenAIService _openAiService;
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IImageStorageOutPort _imageStorageOutPort;
     private readonly IDomainEventBus _domainEventBus;
@@ -26,7 +26,7 @@ public class AddImageMessageServiceTest
     public AddImageMessageServiceTest()
     {
         _openAiService = Substitute.For<IOpenAIService>();
-        _messageChannelOutPort = Substitute.For<IMessageChannelOutPort>();
+        _topicOutPort = Substitute.For<ITopicOutPort>();
         _messageOutPort = Substitute.For<IMessageOutPort>();
         _imageStorageOutPort = Substitute.For<IImageStorageOutPort>();
         _domainEventBus = Substitute.For<IDomainEventBus>();
@@ -37,7 +37,7 @@ public class AddImageMessageServiceTest
     private IAddImageMessageService GetSystemUnderTest()
     {
         return new AddImageMessageService(_openAiService, 
-            _messageChannelOutPort, 
+            _topicOutPort, 
             _messageOutPort,
             _imageStorageOutPort, 
             _domainEventBus,
@@ -50,11 +50,11 @@ public class AddImageMessageServiceTest
         // Arrange
         var input = new AddImageMessageInput
         {
-            ChannelId = Guid.NewGuid(),
+            TopicId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
             Message = "Test"
         };
-        _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId).Returns(MessageChannel.Null);
+        _topicOutPort.GetAsync(input.TopicId, input.MemberId).Returns(Topic.Null);
         var service = GetSystemUnderTest();
         
         // Act
@@ -70,12 +70,12 @@ public class AddImageMessageServiceTest
         // Arrange
         var input = new AddImageMessageInput
         {
-            ChannelId = Guid.NewGuid(),
+            TopicId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
             Message = "Test"
         };
-        var messageChannel = new MessageChannel(input.ChannelId, input.MemberId, "title",_timeProvider);
-        _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId).Returns(messageChannel);
+        var messageChannel = new Topic(input.TopicId, input.MemberId, "title",_timeProvider);
+        _topicOutPort.GetAsync(input.TopicId, input.MemberId).Returns(messageChannel);
         var imageCreateResponse = new ImageCreateResponse
         {
             Error = new Error()
@@ -96,12 +96,12 @@ public class AddImageMessageServiceTest
         // Arrange
         var input = new AddImageMessageInput
         {
-            ChannelId = Guid.NewGuid(),
+            TopicId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
             Message = "Test"
         };
-        var messageChannel = new MessageChannel(input.ChannelId, input.MemberId, "title",_timeProvider);
-        _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId).Returns(messageChannel);
+        var messageChannel = new Topic(input.TopicId, input.MemberId, "title",_timeProvider);
+        _topicOutPort.GetAsync(input.TopicId, input.MemberId).Returns(messageChannel);
         var imageCreateResponse = new ImageCreateResponse
         {
             Results = new List<ImageCreateResponse.ImageDataResult>
@@ -117,7 +117,7 @@ public class AddImageMessageServiceTest
         var imageUrl = "https://image.com";
         _imageStorageOutPort.SaveObjectAsync("imageSteam").Returns(imageUrl);
         _messageOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
-        _messageChannelOutPort.UpdateAsync(messageChannel).Returns(true);
+        _topicOutPort.UpdateAsync(messageChannel).Returns(true);
         
         var service = GetSystemUnderTest();
         
@@ -126,7 +126,7 @@ public class AddImageMessageServiceTest
         
         // Assert
         act.Should().Be(imageUrl);
-        _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<MessageChannel>());
+        _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<Topic>());
         
     }
     
@@ -136,12 +136,12 @@ public class AddImageMessageServiceTest
         // Arrange
         var input = new AddImageMessageInput
         {
-            ChannelId = Guid.NewGuid(),
+            TopicId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
             Message = "Test"
         };
-        var messageChannel = new MessageChannel(input.ChannelId, input.MemberId, "title",_timeProvider);
-        _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId).Returns(messageChannel);
+        var messageChannel = new Topic(input.TopicId, input.MemberId, "title",_timeProvider);
+        _topicOutPort.GetAsync(input.TopicId, input.MemberId).Returns(messageChannel);
         var imageCreateResponse = new ImageCreateResponse
         {
             Results = new List<ImageCreateResponse.ImageDataResult>
@@ -157,7 +157,7 @@ public class AddImageMessageServiceTest
         var imageUrl = "https://image.com";
         _imageStorageOutPort.SaveObjectAsync("imageSteam").Returns(imageUrl);
         _messageOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
-        _messageChannelOutPort.UpdateAsync(messageChannel).Returns(false);
+        _topicOutPort.UpdateAsync(messageChannel).Returns(false);
         
         var service = GetSystemUnderTest();
         

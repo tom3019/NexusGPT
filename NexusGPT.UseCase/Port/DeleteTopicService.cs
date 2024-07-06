@@ -4,13 +4,13 @@ using NexusGPT.UseCase.Port.Out;
 
 namespace NexusGPT.UseCase.Port;
 
-public class DeleteMessageChannelService : IDeleteMessageChannelService
+public class DeleteTopicService : IDeleteTopicService
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
 
-    public DeleteMessageChannelService(IMessageChannelOutPort messageChannelOutPort)
+    public DeleteTopicService(ITopicOutPort topicOutPort)
     {
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
     }
 
     /// <summary>
@@ -22,13 +22,13 @@ public class DeleteMessageChannelService : IDeleteMessageChannelService
     /// <exception cref="MessageChannelNotFoundException"></exception>
     public async Task<bool> HandleAsync(Guid channelId, Guid memberId)
     {
-        var messageChannel = await _messageChannelOutPort.GetAsync(channelId, memberId);
+        var messageChannel = await _topicOutPort.GetAsync(channelId, memberId);
         if (messageChannel.IsNull())
         {
             throw new MessageChannelNotFoundException("找不到訊息頻道");
         }
 
-        var success = await _messageChannelOutPort.DeleteAsync(messageChannel);
+        var success = await _topicOutPort.DeleteAsync(messageChannel);
         return success;
     }
 }
