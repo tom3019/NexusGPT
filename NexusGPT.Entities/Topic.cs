@@ -1,3 +1,4 @@
+using NexusGPT.Entities.Exceptions;
 using NexusGPT.SeedWork;
 
 namespace NexusGPT.Entities;
@@ -126,6 +127,10 @@ public class Topic : AggregateRoot<TopicId>, INullObject
 
     protected override void EnsureValidState()
     {
+        if (string.IsNullOrEmpty(Title))
+        {
+            throw new TopicDomainException("Title is required.");
+        }
     }
 
     protected Topic()
