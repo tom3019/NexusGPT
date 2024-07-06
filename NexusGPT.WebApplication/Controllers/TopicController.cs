@@ -293,7 +293,7 @@ public class TopicController : ControllerBase
                 StatusMessage = "OK",
                 Data = new
                 {
-                    TopicId = Guid.NewGuid(),
+                    TopicId = shareTopicResultModel.TopicId,
                     Title = shareTopicResultModel.Title
                 }
             });
@@ -302,7 +302,7 @@ public class TopicController : ControllerBase
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = Guid.NewGuid()
+            Data = shareTopicResultModel.TopicId
         });
     }
 
