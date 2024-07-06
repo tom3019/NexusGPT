@@ -6,9 +6,9 @@ namespace NexusGPT.Adapter.Out.Implements;
 
 public class MessageRepository : IMessageOutPort
 {
-    private readonly MessageChannelDbContext _context;
+    private readonly NexusGptDbContext _context;
 
-    public MessageRepository(MessageChannelDbContext context)
+    public MessageRepository(NexusGptDbContext context)
     {
         _context = context;
     }
@@ -36,7 +36,7 @@ public class MessageRepository : IMessageOutPort
     /// <returns></returns>
     private async Task<bool> IsExistAsync(Guid messageId)
     {
-        var count = await _context.MessageChannels
+        var count = await _context.Topics
             .SelectMany(x=>x.Messages)
             .Where(x => x.Id == new MessageId(messageId) )
             .CountAsync();

@@ -12,21 +12,21 @@ namespace NexusGPT.UseCase;
 public class AddImageMessageService : IAddImageMessageService
 {
     private readonly IOpenAIService _openAiService;
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IImageStorageOutPort _imageStorageOutPort;
     private readonly IDomainEventBus _domainEventBus;
     private readonly TimeProvider _timeProvider;
 
     public AddImageMessageService(IOpenAIService openAiService,
-        IMessageChannelOutPort messageChannelOutPort, 
+        ITopicOutPort topicOutPort, 
         IMessageOutPort messageOutPort, 
         IImageStorageOutPort imageStorageOutPort, 
         IDomainEventBus domainEventBus, 
         TimeProvider timeProvider)
     {
         _openAiService = openAiService;
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
         _messageOutPort = messageOutPort;
         _imageStorageOutPort = imageStorageOutPort;
         _domainEventBus = domainEventBus;
@@ -40,10 +40,10 @@ public class AddImageMessageService : IAddImageMessageService
     /// <returns></returns>
     public async Task<string> HandlerAsync(AddImageMessageInput input)
     {
-        var messageChannel = await _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId);
+        var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
 
         var imageCreateResponse = await _openAiService.Image.CreateImage(
@@ -78,7 +78,7 @@ public class AddImageMessageService : IAddImageMessageService
             0,
             _timeProvider);
         
-        var success = await _messageChannelOutPort.UpdateAsync(messageChannel);
+        var success = await _topicOutPort.UpdateAsync(messageChannel);
         if (!success)
         {
             throw new CreateMessageErrorException("Create message failed.");

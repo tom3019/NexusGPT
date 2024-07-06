@@ -1,20 +1,10 @@
-﻿using NexusGPT.WebApplication.Models.ResultViewModel;
-
-namespace NexusGPT.WebApplication.Models.Parameters;
+﻿namespace NexusGPT.WebApplication.Models.Parameters;
 
 /// <summary>
 /// ImportTopicParameter
 /// </summary>
 public class ImportTopicParameter
 {
-    /// <summary>
-    /// 聊天室Id
-    /// </summary>
-    /// <value>
-    /// The topic identifier.
-    /// </value>
-    public Guid TopicId { get; set; }
-
     /// <summary>
     /// 聊天室名稱
     /// </summary>
@@ -30,13 +20,6 @@ public class ImportTopicParameter
     /// <value>
     /// The messages.
     /// </value>
-    public IEnumerable<TopicMessageViewModel> Messages { get; set; }
-
-    /// <summary>
-    /// 聊天室建立時間
-    /// </summary>
-    /// <value>
-    /// The create time.
-    /// </value>
-    public DateTime CreateTime { get; set; }
+    public IEnumerable<TopicMessageParameter> Messages { get; set; }
+    
 }

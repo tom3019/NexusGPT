@@ -9,19 +9,19 @@ namespace NexusGPT.UseCase;
 
 public class AddMessageAsStreamService : IAddMessageAsStreamService
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IOpenAIService _openAiService;
     private readonly IDomainEventBus _domainEventBus;
     private readonly TimeProvider _timeProvider;
     
-    public AddMessageAsStreamService(IMessageChannelOutPort messageChannelOutPort,
+    public AddMessageAsStreamService(ITopicOutPort topicOutPort,
         IMessageOutPort messageOutPort,
         IOpenAIService openAiService, 
         IDomainEventBus domainEventBus, 
         TimeProvider timeProvider)
     {
-        _messageChannelOutPort = messageChannelOutPort;
+        _topicOutPort = topicOutPort;
         _messageOutPort = messageOutPort;
         _openAiService = openAiService;
         _domainEventBus = domainEventBus;
@@ -35,10 +35,10 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
     /// <returns></returns>
     public async IAsyncEnumerable<string> HandlerAsync(AddMessageInput input)
     {
-        var messageChannel = await _messageChannelOutPort.GetAsync(input.ChannelId, input.MemberId);
+        var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
         
         var openAiMessages = new List<ChatMessage>
@@ -89,7 +89,7 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
             completionTokens,
             _timeProvider);
 
-        var success = await _messageChannelOutPort.UpdateAsync(messageChannel);
+        var success = await _topicOutPort.UpdateAsync(messageChannel);
         if (!success)
         {
             throw new CreateMessageErrorException("Create message failed.");
