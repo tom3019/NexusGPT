@@ -286,7 +286,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicImportResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicShareResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
