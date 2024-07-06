@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using NexusGPT.UseCase.Port.In.AddMessage;
 using NexusGPT.WebApplication.Models.Parameters;
-using NexusGPT.WebApplication.Models.ResultViewModel;
+using NexusGPT.WebApplication.Models.ViewModels;
 using SignalRSwaggerGen.Attributes;
 
 namespace NexusGPT.WebApplication.Hubs;
@@ -34,13 +34,13 @@ public class MessageHub : Hub
         await foreach (var messageStream in _addMessageAsStreamService.HandlerAsync(
                            new AddMessageInput
                            {
-                               ChannelId = parameter.TopicId,
+                               TopicId = parameter.TopicId,
                                MemberId = memberId,
                                Question = parameter.Message,
                                SystemMessage = "你是一個智慧AI"
                            }))
         {
-            await Clients.Caller.SendAsync("SendMessageResult",
+            await Clients.User(memberId.ToString()).SendAsync("SendMessageResult",
                 new ResultViewModel<MessageViewModel>
                 {
                     StatuesCode = 200,
@@ -67,10 +67,10 @@ public class MessageHub : Hub
             {
                 Message = parameter.Message,
                 MemberId = memberId,
-                ChannelId = parameter.TopicId
+                TopicId = parameter.TopicId
             });
         
-        await Clients.Caller.SendAsync("SendImageMessageResult",
+        await Clients.User(memberId.ToString()).SendAsync("SendImageMessageResult",
             new ResultViewModel<MessageViewModel>
             {
                 StatuesCode = 200,

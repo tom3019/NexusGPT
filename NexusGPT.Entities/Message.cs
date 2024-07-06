@@ -15,9 +15,9 @@ public class Message : Entity<MessageId>
     public string Answer { get; private set; }
 
     /// <summary>
-    /// ChannelId
+    /// TopicId
     /// </summary>
-    public Guid ChannelId { get;private set; }
+    public Guid TopicId { get;private set; }
     
     /// <summary>
     /// 問題Token數
@@ -55,7 +55,7 @@ public class Message : Entity<MessageId>
                 Id = e.MessageId;
                 Question = e.Question;
                 Answer = e.Answer;
-                ChannelId = e.ChannelId;
+                TopicId = e.TopicId;
                 QuestionTokenCount = e.QuestionTokenCount;
                 AnswerTokenCount = e.AnswerTokenCount;
                 CreateTime = e.CreateTime;

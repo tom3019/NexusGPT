@@ -51,7 +51,7 @@ builder.Services.AddHttpClient("NexusGPT");
 builder.Services.AddNexusGPTModule()
     .AddEventBusModule();
 
-builder.Services.AddDbContext<MessageChannelDbContext>(
+builder.Services.AddDbContext<NexusGptDbContext>(
     o => 
         o.UseSqlServer(builder.Configuration.GetConnectionString("NexusGPT")));
 

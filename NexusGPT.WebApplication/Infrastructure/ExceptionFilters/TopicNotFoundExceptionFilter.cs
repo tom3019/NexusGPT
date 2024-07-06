@@ -5,15 +5,15 @@ using NexusGPT.UseCase.Exceptions;
 namespace NexusGPT.WebApplication.Infrastructure.ExceptionFilters;
 
 [AttributeUsage(AttributeTargets.Method|AttributeTargets.Class)]
-public class MessageChannelMaxCountExceptionFilter : ExceptionFilterAttribute
+public class TopicNotFoundExceptionFilter : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {
-        if (context.Exception is TopicMaxCountException)
+        if (context.Exception is TopicNotFoundException)
         {
-            context.Result = new BadRequestObjectResult(new
+            context.Result = new NotFoundObjectResult(new
             {
-                StatusCode = 400,
+                StatusCode = 404,
                 Message = context.Exception.Message
             });
             context.ExceptionHandled = true;

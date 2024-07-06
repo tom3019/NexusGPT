@@ -16,7 +16,7 @@ namespace NexusGPT.UseCaseTest;
 
 public class AddMessageAsStreamServiceTest
 {
-    private readonly IMessageChannelOutPort _messageChannelOutPort;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly IMessageOutPort _messageOutPort;
     private readonly IOpenAIService _openAiService;
     private readonly IDomainEventBus _domainEventBus;
@@ -24,7 +24,7 @@ public class AddMessageAsStreamServiceTest
 
     public AddMessageAsStreamServiceTest()
     {
-        _messageChannelOutPort = Substitute.For<IMessageChannelOutPort>();
+        _topicOutPort = Substitute.For<ITopicOutPort>();
         _messageOutPort = Substitute.For<IMessageOutPort>();
         _openAiService = Substitute.For<IOpenAIService>();
         _domainEventBus = Substitute.For<IDomainEventBus>();
@@ -33,7 +33,7 @@ public class AddMessageAsStreamServiceTest
 
     private IAddMessageAsStreamService SystemUnderTest()
     {
-        return new AddMessageAsStreamService(_messageChannelOutPort, 
+        return new AddMessageAsStreamService(_topicOutPort, 
             _messageOutPort,
             _openAiService, 
             _domainEventBus,
@@ -71,7 +71,7 @@ public class AddMessageAsStreamServiceTest
         var memberId = Guid.NewGuid();
         var title = "title";
 
-        var messageChannel = new MessageChannel(channelId, memberId, title, _timeProvider);
+        var messageChannel = new Topic(channelId, memberId, title, _timeProvider);
         messageChannel.AddMessage(Guid.NewGuid(), "第一個問題",
             "第一個問題的答案", 200, 200
             ,_timeProvider);
@@ -80,9 +80,9 @@ public class AddMessageAsStreamServiceTest
         var systemMessage = "test";
         var resultMessage = "第二個問題的答案";
 
-        _messageChannelOutPort.GetAsync(channelId, memberId).Returns(messageChannel);
+        _topicOutPort.GetAsync(channelId, memberId).Returns(messageChannel);
         _messageOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
-        _messageChannelOutPort.UpdateAsync(messageChannel).Returns(true);
+        _topicOutPort.UpdateAsync(messageChannel).Returns(true);
 
         _openAiService.ChatCompletion.CreateCompletionAsStream(Arg.Any<ChatCompletionCreateRequest>()).Returns(
             GetTestData(resultMessage));
@@ -91,7 +91,7 @@ public class AddMessageAsStreamServiceTest
         var actual = sut.HandlerAsync(
             new AddMessageInput
             {
-                ChannelId = channelId,
+                TopicId = channelId,
                 MemberId = memberId,
                 Question = question,
                 SystemMessage = systemMessage
@@ -102,7 +102,7 @@ public class AddMessageAsStreamServiceTest
             se.Should().Be(resultMessage);
         }
 
-        _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<MessageChannel>());
+        _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<Topic>());
     }
 
 
@@ -113,7 +113,7 @@ public class AddMessageAsStreamServiceTest
         var memberId = Guid.NewGuid();
         var title = "title";
 
-        var messageChannel = new MessageChannel(channelId, memberId, title, _timeProvider);
+        var messageChannel = new Topic(channelId, memberId, title, _timeProvider);
         messageChannel.AddMessage(Guid.NewGuid(), "第一個問題",
             "第一個問題的答案", 200, 200,
             _timeProvider);
@@ -122,9 +122,9 @@ public class AddMessageAsStreamServiceTest
         var systemMessage = "test";
         var resultMessage = "第二個問題的答案";
 
-        _messageChannelOutPort.GetAsync(channelId, memberId).Returns(messageChannel);
+        _topicOutPort.GetAsync(channelId, memberId).Returns(messageChannel);
         _messageOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
-        _messageChannelOutPort.UpdateAsync(messageChannel).Returns(false);
+        _topicOutPort.UpdateAsync(messageChannel).Returns(false);
 
         _openAiService.ChatCompletion.CreateCompletionAsStream(Arg.Any<ChatCompletionCreateRequest>()).Returns(
             GetTestData(resultMessage));
@@ -133,7 +133,7 @@ public class AddMessageAsStreamServiceTest
         var actual =  sut.HandlerAsync(
             new AddMessageInput
             {
-                ChannelId = channelId,
+                TopicId = channelId,
                 MemberId = memberId,
                 Question = question,
                 SystemMessage = systemMessage

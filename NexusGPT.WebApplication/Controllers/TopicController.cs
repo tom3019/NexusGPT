@@ -5,7 +5,7 @@ using NexusGPT.UseCase.Port.In;
 using NexusGPT.WebApplication.Hubs;
 using NexusGPT.WebApplication.Infrastructure.ExceptionFilters;
 using NexusGPT.WebApplication.Models.Parameters;
-using NexusGPT.WebApplication.Models.ResultViewModel;
+using NexusGPT.WebApplication.Models.ViewModels;
 
 namespace NexusGPT.WebApplication.Controllers;
 
@@ -14,29 +14,32 @@ namespace NexusGPT.WebApplication.Controllers;
 [ApiVersion("1.0")]
 [Produces("application/json")]
 [Consumes("application/json")]
-[MessageChannelNotFoundExceptionFilter]
+[TopicNotFoundExceptionFilter]
 public class TopicController : ControllerBase
 {
-    private readonly ICreateMessageChannelService _createMessageChannelService;
+    private readonly ICreateTopicService _createTopicService;
     private readonly IChangeTitleService _changeTitleService;
-    private readonly IDeleteMessageChannelService _deleteMessageChannelService;
-    private readonly IMessageChannelQueryService _messageChannelQueryService;
+    private readonly IDeleteTopicService _deleteTopicService;
+    private readonly ITopicQueryService _topicQueryService;
     private readonly IHubContext<TopicHub> _hubContext;
-    private readonly IImportChannelService _importChannelService;
+    private readonly IShareTopicService _shareTopicService;
+    private readonly IImportTopicService _importTopicService;
 
-    public TopicController(ICreateMessageChannelService createMessageChannelService,
+    public TopicController(ICreateTopicService createTopicService,
         IChangeTitleService changeTitleService,
-        IDeleteMessageChannelService deleteMessageChannelService,
-        IMessageChannelQueryService messageChannelQueryService,
+        IDeleteTopicService deleteTopicService,
+        ITopicQueryService topicQueryService,
         IHubContext<TopicHub> hubContext,
-        IImportChannelService importChannelService)
+        IShareTopicService shareTopicService,
+        IImportTopicService importTopicService)
     {
-        _createMessageChannelService = createMessageChannelService;
+        _createTopicService = createTopicService;
         _changeTitleService = changeTitleService;
-        _deleteMessageChannelService = deleteMessageChannelService;
-        _messageChannelQueryService = messageChannelQueryService;
+        _deleteTopicService = deleteTopicService;
+        _topicQueryService = topicQueryService;
         _hubContext = hubContext;
-        _importChannelService = importChannelService;
+        _shareTopicService = shareTopicService;
+        _importTopicService = importTopicService;
     }
 
     /// <summary>
@@ -51,8 +54,8 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] TopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var channelId = await _createMessageChannelService.HandlerAsync(memberId, parameter.Title);
-        if (channelId == Guid.Empty)
+        var topicId = await _createTopicService.HandlerAsync(memberId, parameter.Title);
+        if (topicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
             {
@@ -62,14 +65,14 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.All.SendAsync("ChannelCreateResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicCreateResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
                 StatusMessage = "OK",
                 Data = new
                 {
-                    TopicId = channelId,
+                    TopicId = topicId,
                     Title = parameter.Title
                 }
             });
@@ -78,7 +81,7 @@ public class TopicController : ControllerBase
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = channelId
+            Data = topicId
         });
     }
 
@@ -89,7 +92,7 @@ public class TopicController : ControllerBase
     /// <param name="parameter">The parameter.</param>
     [HttpPatch("{id:guid}")]
     [ProducesResponseType<ResultViewModel<bool>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateTitleAsync([FromRoute] Guid id, [FromBody] TopicParameter parameter)
+    public async Task<IActionResult> ChangeTitleAsync([FromRoute] Guid id, [FromBody] TopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var success = await _changeTitleService.HandleAsync(id, memberId, parameter.Title);
@@ -103,7 +106,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.All.SendAsync("ChannelTitleUpdateResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicTitleUpdateResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
@@ -132,7 +135,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var success = await _deleteMessageChannelService.HandleAsync(id, memberId);
+        var success = await _deleteTopicService.HandleAsync(id, memberId);
 
         if (!success)
         {
@@ -144,7 +147,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.All.SendAsync("ChannelDeleteResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicDeleteResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
@@ -167,14 +170,14 @@ public class TopicController : ControllerBase
     /// 取得聊天室列表
     /// </summary>
     [HttpGet]
-    [ProducesResponseType<ResultViewModel<IEnumerable<TopicResultViewModel>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ResultViewModel<IEnumerable<TopicViewModel>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetListAsync()
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var messageChannels = await _messageChannelQueryService.GetListAsync(memberId);
+        var messageChannels = await _topicQueryService.GetListAsync(memberId);
 
         var viewModel = messageChannels.Select(x =>
-            new TopicResultViewModel
+            new TopicViewModel
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -182,7 +185,7 @@ public class TopicController : ControllerBase
                 LastMessageCreateTime = x.LastMessageCreateTime
             }).OrderByDescending(x => x.LastMessageCreateTime);
 
-        return Ok(new ResultViewModel<IEnumerable<TopicResultViewModel>>
+        return Ok(new ResultViewModel<IEnumerable<TopicViewModel>>
         {
             StatuesCode = 200,
             StatusMessage = "OK",
@@ -195,25 +198,26 @@ public class TopicController : ControllerBase
     /// </summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType<ResultViewModel<TopicDetailViewModel>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetTopicDetailAsync(Guid id)
+    public async Task<IActionResult> GetDetailAsync(Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var messageChannel = await _messageChannelQueryService.GetDetailAsync(id, memberId);
+        var messageChannel = await _topicQueryService.GetDetailAsync(id, memberId);
 
         var viewModel = new TopicDetailViewModel
         {
             TopicId = messageChannel.Id,
             Title = messageChannel.Title,
-            Messages = messageChannel.Messages.Select(x => new TopicMessageViewModel
-            {
-                MessageId = x.Id,
-                Question = x.Question,
-                Answer = x.Answer,
-                QuestionTokenCount = x.QuestionTokenCount,
-                AnswerTokenCount = x.AnswerTokenCount,
-                TotalTokenCount = x.TotalTokenCount,
-                CreateTime = x.CreateTime.DateTime
-            }).OrderByDescending(x => x.CreateTime),
+            Messages = messageChannel.Messages.Select(x =>
+                new TopicMessageViewModel
+                {
+                    MessageId = x.Id,
+                    Question = x.Question,
+                    Answer = x.Answer,
+                    QuestionTokenCount = x.QuestionTokenCount,
+                    AnswerTokenCount = x.AnswerTokenCount,
+                    TotalTokenCount = x.TotalTokenCount,
+                    CreateTime = x.CreateTime.DateTime
+                }).OrderByDescending(x => x.CreateTime),
             CreateTime = messageChannel.CreateTime.DateTime
         };
 
@@ -231,12 +235,28 @@ public class TopicController : ControllerBase
     /// <param name="parameter"></param>
     /// <returns></returns>
     [HttpPost("import")]
-    [ProducesResponseType<ResultViewModel<Guid>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ImportTopicAsync(ImportTopicParameter parameter)
+    [ProducesResponseType<ResultViewModel<ShareTopicViewModel>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> ImportAsync(ImportTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var channelId = await _importChannelService.HandlerAsync(parameter.TopicId, memberId);
-        if (channelId == Guid.Empty)
+
+        var input = new ImportTopicInput
+        {
+            MemberId = memberId,
+            Title = parameter.Title,
+            Messages = parameter.Messages.Select(x =>
+                new ImportMessageParameter
+                {
+                    Question = x.Question,
+                    Answer = x.Answer,
+                    QuestionTokenCount = x.QuestionTokenCount,
+                    AnswerTokenCount = x.AnswerTokenCount,
+                    TotalTokenCount = x.TotalTokenCount,
+                    CreateTime = x.CreateTime
+                })
+        };
+        var shareTopicResultModel = await _importTopicService.HandlerAsync(input);
+        if (shareTopicResultModel.TopicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
             {
@@ -246,23 +266,72 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.All.SendAsync("ChannelImportResult",
-            new ResultViewModel<object>
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicImportResult",
+            new ResultViewModel<ShareTopicViewModel>
             {
                 StatuesCode = 200,
                 StatusMessage = "OK",
-                Data = new
+                Data = new ShareTopicViewModel
                 {
-                    TopicId = Guid.NewGuid(),
-                    Title = parameter.Title
+                    TopicId = shareTopicResultModel.TopicId,
+                    Title = shareTopicResultModel.Title
                 }
             });
 
-        return Ok(new ResultViewModel<Guid>
+        return Ok(new ResultViewModel<ShareTopicViewModel>
         {
             StatuesCode = 200,
             StatusMessage = "OK",
-            Data = Guid.NewGuid()
+            Data = new ShareTopicViewModel
+            {
+                TopicId = shareTopicResultModel.TopicId,
+                Title = shareTopicResultModel.Title
+            }
+        });
+    }
+
+    /// <summary>
+    /// 分享聊天室
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost("share/{id:guid}")]
+    [ProducesResponseType<ResultViewModel<ShareTopicViewModel>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> ShareAsync(Guid id)
+    {
+        var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
+        var shareTopicResultModel = await _shareTopicService.HandlerAsync(id, memberId);
+        if (shareTopicResultModel.TopicId == Guid.Empty)
+        {
+            return BadRequest(new ResultViewModel<Guid>
+            {
+                StatuesCode = 400,
+                StatusMessage = "建立失敗",
+                Data = Guid.Empty
+            });
+        }
+
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicShareResult",
+            new ResultViewModel<ShareTopicViewModel>
+            {
+                StatuesCode = 200,
+                StatusMessage = "OK",
+                Data = new ShareTopicViewModel
+                {
+                    TopicId = shareTopicResultModel.TopicId,
+                    Title = shareTopicResultModel.Title
+                }
+            });
+
+        return Ok(new ResultViewModel<ShareTopicViewModel>
+        {
+            StatuesCode = 200,
+            StatusMessage = "OK",
+            Data = new ShareTopicViewModel
+            {
+                TopicId = shareTopicResultModel.TopicId,
+                Title = shareTopicResultModel.Title
+            }
         });
     }
 
@@ -273,11 +342,11 @@ public class TopicController : ControllerBase
     /// <returns></returns>
     [HttpGet("search")]
     [ProducesResponseType<ResultViewModel<IEnumerable<SearchTopicViewModel>>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> SearchTopicAsync([FromQuery]SearchTopicParameter parameter)
+    public async Task<IActionResult> SearchAsync([FromQuery] SearchTopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var searchMessageChannelDataModels =
-            await _messageChannelQueryService.SearchTopicAsync(memberId, parameter.Keyword);
+            await _topicQueryService.SearchTopicAsync(memberId, parameter.Keyword);
 
         var viewModels =
             searchMessageChannelDataModels.Select(x =>
@@ -286,7 +355,7 @@ public class TopicController : ControllerBase
                     TopicId = x.Id,
                     MessageId = x.MessageIds
                 });
-        
+
         return Ok(new ResultViewModel<IEnumerable<SearchTopicViewModel>>
         {
             StatuesCode = 200,

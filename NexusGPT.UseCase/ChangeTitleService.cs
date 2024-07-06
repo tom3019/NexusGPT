@@ -7,34 +7,34 @@ namespace NexusGPT.UseCase;
 
 public class ChangeTitleService : IChangeTitleService
 {
-    private readonly IMessageChannelOutPort _messageChannel;
+    private readonly ITopicOutPort _topic;
     private readonly IDomainEventBus _domainEventBus;
 
-    public ChangeTitleService(IMessageChannelOutPort messageChannel,
+    public ChangeTitleService(ITopicOutPort topic,
         IDomainEventBus domainEventBus)
     {
-        _messageChannel = messageChannel;
+        _topic = topic;
         _domainEventBus = domainEventBus;
     }
 
     /// <summary>
     /// 變更聊天室標題
     /// </summary>
-    /// <param name="channelId"></param>
+    /// <param name="topicId"></param>
     /// <param name="memberId"></param>
     /// <param name="title"></param>
     /// <returns></returns>
-    public async Task<bool> HandleAsync(Guid channelId, Guid memberId, string title)
+    public async Task<bool> HandleAsync(Guid topicId, Guid memberId, string title)
     {
-        var messageChannel = await _messageChannel.GetAsync(channelId, memberId);
+        var messageChannel = await _topic.GetAsync(topicId, memberId);
         if (messageChannel.IsNull())
         {
-            throw new MessageChannelNotFoundException("找不到訊息頻道");
+            throw new TopicNotFoundException("找不到訊息頻道");
         }
         
         messageChannel.ChangeTitle(title);
 
-        var success = await _messageChannel.UpdateAsync(messageChannel);
+        var success = await _topic.UpdateAsync(messageChannel);
         if (success)
         {
             await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
