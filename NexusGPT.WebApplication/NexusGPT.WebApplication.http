@@ -1,0 +1,6 @@
+@NexusGPT.WebApplication_HostAddress = http://localhost:5261
+
+GET {{NexusGPT.WebApplication_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
