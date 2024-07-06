@@ -11,6 +11,7 @@
 .ideausage.statistics.xml
 .ideadictionaries
 .ideashelf
+.idea/
 
 # AWS User-specific
 .ideaaws.xml
