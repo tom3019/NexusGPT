@@ -62,7 +62,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.User(memberId.ToString()).SendAsync("ChannelCreateResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicCreateResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
@@ -103,7 +103,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.User(memberId.ToString()).SendAsync("ChannelTitleUpdateResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicTitleUpdateResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
@@ -144,7 +144,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.User(memberId.ToString()).SendAsync("ChannelDeleteResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicDeleteResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
@@ -246,7 +246,7 @@ public class TopicController : ControllerBase
             });
         }
 
-        await _hubContext.Clients.User(memberId.ToString()).SendAsync("ChannelImportResult",
+        await _hubContext.Clients.User(memberId.ToString()).SendAsync("TopicImportResult",
             new ResultViewModel<object>
             {
                 StatuesCode = 200,
