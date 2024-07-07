@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusGPT.WebApplication", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusGPT.Adapter.Out.ImageStorage.Local", "NexusGPT.Adapter.Out.ImageStorage.Local\NexusGPT.Adapter.Out.ImageStorage.Local.csproj", "{D12AEB09-3623-4F9D-B30A-0074A95C4467}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexusGPT.Adapter.Out.ImageStorage.S3", "NexusGPT.Adapter.Out.ImageStorage.S3\NexusGPT.Adapter.Out.ImageStorage.S3.csproj", "{8B6B20A1-485D-4836-81CF-1B2B02F039AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{D12AEB09-3623-4F9D-B30A-0074A95C4467}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D12AEB09-3623-4F9D-B30A-0074A95C4467}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D12AEB09-3623-4F9D-B30A-0074A95C4467}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B6B20A1-485D-4836-81CF-1B2B02F039AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6B20A1-485D-4836-81CF-1B2B02F039AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6B20A1-485D-4836-81CF-1B2B02F039AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6B20A1-485D-4836-81CF-1B2B02F039AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
