@@ -48,14 +48,22 @@ builder.Services.AddApiVersioning(option =>
 
 builder.Services.AddHttpClient("NexusGPT");
 
-builder.Services.AddNexusGptModule(b=>b.UseLocalImageStorage())
-    .AddEventBusModule();
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AWS_BUCKET")))
+{
+    builder.Services.AddNexusGptModule(b => b.UseLocalImageStorage());
+}
+else
+{
+    builder.Services.AddNexusGptModule(b => b.UseS3ImageStorage());
+}
 
-var connectionString =  Environment.GetEnvironmentVariable("ConnectionString") 
-                        ?? throw new ArgumentNullException(nameof(Program),$"ConnectionString is null");
+builder.Services.AddEventBusModule();
+
+var connectionString = Environment.GetEnvironmentVariable("ConnectionString")
+                       ?? throw new ArgumentNullException(nameof(Program), $"ConnectionString is null");
 
 builder.Services.AddDbContext<NexusGptDbContext>(
-    o => 
+    o =>
         o.UseSqlServer(connectionString));
 
 builder.Services.AddCors(o =>
