@@ -26,7 +26,8 @@ public static class ServiceCollectionExtensions
         
         service.AddSingleton(TimeProvider.System);
         service.AddOpenAIService(o => o.ApiKey =
-           Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new ArgumentNullException("OPENAI_API_KEY"));
+           Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? 
+           throw new ArgumentNullException(nameof(AddNexusGptModule),"OPENAI_API_KEY is null"));
         return service.AddNexusGPTInput()
             .AddNexusGPTOutput();
     }

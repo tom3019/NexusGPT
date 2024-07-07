@@ -6,9 +6,4 @@ public class AwsS3StorageOptions
     /// Bucket name
     /// </summary>
     public string BucketName { get; set; }
-    
-    /// <summary>
-    /// Region
-    /// </summary>
-    public string Region { get; set; }
 }
