@@ -48,7 +48,7 @@ builder.Services.AddApiVersioning(option =>
 
 builder.Services.AddHttpClient("NexusGPT");
 
-builder.Services.AddNexusGPTModule()
+builder.Services.AddNexusGptModule(b=>b.UseLocalImageStorage())
     .AddEventBusModule();
 
 builder.Services.AddDbContext<NexusGptDbContext>(

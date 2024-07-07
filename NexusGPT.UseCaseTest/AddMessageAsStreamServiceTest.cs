@@ -139,7 +139,7 @@ public class AddMessageAsStreamServiceTest
                 SystemMessage = systemMessage
             });
 
-        Func<Task> func = async () =>
+        var func = async () =>
         {
             await foreach (var s in actual)
             {
@@ -147,5 +147,38 @@ public class AddMessageAsStreamServiceTest
         };
 
         await func.Should().ThrowAsync<CreateMessageErrorException>();
+    }
+    
+    [Fact]
+    public async Task HandlerAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
+    {
+        var channelId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var title = "title";
+
+        _topicOutPort.GetAsync(channelId, memberId).Returns(Topic.Null);
+
+        var question = "第二個問題";
+        var systemMessage = "test";
+        var resultMessage = "第二個問題的答案";
+
+        var sut = SystemUnderTest();
+        var actual =  sut.HandlerAsync(
+            new AddMessageInput
+            {
+                TopicId = channelId,
+                MemberId = memberId,
+                Question = question,
+                SystemMessage = systemMessage
+            });
+
+        var func = async () =>
+        {
+            await foreach (var s in actual)
+            {
+            }
+        };
+
+        await func.Should().ThrowAsync<TopicNotFoundException>();
     }
 }

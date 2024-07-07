@@ -37,8 +37,8 @@ public class AddMessageService : IAddMessageService
     /// <returns></returns>
     public async Task<string> HandlerAsync(AddMessageInput input)
     {
-        var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
-        if (messageChannel.IsNull())
+        var topic = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
+        if (topic.IsNull())
         {
             throw new TopicNotFoundException("找不到訊息頻道");
         }
@@ -48,7 +48,7 @@ public class AddMessageService : IAddMessageService
             ChatMessage.FromSystem(input.SystemMessage),
         };
 
-        foreach (var messageChannelMessage in messageChannel.Messages)
+        foreach (var messageChannelMessage in topic.Messages)
         {
             openAiMessages.Add(ChatMessage.FromUser(messageChannelMessage.Question));
             openAiMessages.Add(ChatMessage.FromAssistant(messageChannelMessage.Answer));
@@ -67,20 +67,20 @@ public class AddMessageService : IAddMessageService
                 });
 
         var messageId = await _messageOutPort.GenerateIdAsync();
-        messageChannel.AddMessage(messageId,
+        topic.AddMessage(messageId,
             input.Question,
             completionResult.Choices.First().Message.Content!,
             completionResult.Usage.PromptTokens,
             completionResult.Usage.CompletionTokens ?? 0,
             _timeProvider);
 
-        var success = await _topicOutPort.UpdateAsync(messageChannel);
+        var success = await _topicOutPort.UpdateAsync(topic);
         if (!success)
         {
             throw new CreateMessageErrorException("Create message failed.");
         }
         
-        await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
+        await _domainEventBus.DispatchDomainEventsAsync(topic);
         
         return completionResult.Choices.First().Message.Content!;
     }

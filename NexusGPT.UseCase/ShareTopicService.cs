@@ -36,31 +36,31 @@ public class ShareTopicService : IShareTopicService
     /// <exception cref="TopicNotFoundException"></exception>
     public async Task<ShareTopicResultModel> HandlerAsync(Guid id, Guid memberId)
     {
-        var messageChannel = await _topicOutPort.GetAsync(id);
-        if (messageChannel.IsNull())
+        var topic = await _topicOutPort.GetAsync(id);
+        if (topic.IsNull())
         {
             throw new TopicNotFoundException("找不到訊息頻道");
         }
 
         var newId = await _topicOutPort.GenerateIdAsync();
-        var newMessageChannel = new Topic(newId, memberId, messageChannel.Title,
+        var newMessageChannel = new Topic(newId, memberId, topic.Title,
             _timeProvider);
 
-        foreach (var messageChannelMessage in messageChannel.Messages.OrderBy(x=>x.CreateTime))
+        foreach (var messageChannelMessage in topic.Messages.OrderBy(x=>x.CreateTime))
         {
             var messageId = await _messageOutPort.GenerateIdAsync();
             newMessageChannel.AddMessage(messageId,
                 messageChannelMessage.Question,
                 messageChannelMessage.Answer,
                 messageChannelMessage.QuestionTokenCount,
-                 messageChannel.TotalAnswerTokenCount,
+                 topic.TotalAnswerTokenCount,
                 _timeProvider);
         }
 
         var success = await _topicOutPort.SaveAsync(newMessageChannel);
         if (success)
         {
-            await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
+            await _domainEventBus.DispatchDomainEventsAsync(topic);
             return new ShareTopicResultModel
             {
                 TopicId = newId,

@@ -136,4 +136,54 @@ public class AddMessageServiceTest
 
         await actual.Should().ThrowAsync<CreateMessageErrorException>();
     }
+    
+    [Fact]
+    public async Task HandlerAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
+    {
+        var topicId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var title = "title";
+        var topic = new Topic(topicId, memberId,title ,_timeProvider);
+        topic.AddMessage(Guid.NewGuid(), "第一個問題",
+            "第一個問題的答案",200,200,
+            _timeProvider);
+        
+        var question = "第二個問題";
+        var systemMessage = "test";
+        var resultMessage = "第二個問題的答案";
+
+        _topicOutPort.GetAsync(topicId, memberId).Returns(Topic.Null);
+        _messageOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
+        _topicOutPort.UpdateAsync(topic).Returns(false);
+        _openAiService.ChatCompletion.CreateCompletion(Arg.Any<ChatCompletionCreateRequest>()).Returns(
+            new ChatCompletionCreateResponse
+            {
+                Choices = new List<ChatChoiceResponse>
+                {
+                    new()
+                    {
+                        Message = new ChatMessage
+                        {
+                            Content = resultMessage,
+                        },
+                    },
+                },
+                Usage = new UsageResponse
+                {
+                    PromptTokens = 100,
+                    CompletionTokens = 100,
+                },
+            });
+
+        var sut = SystemUnderTest();
+        Func<Task> actual = ()=> sut.HandlerAsync(new AddMessageInput
+        {
+            TopicId = topicId,
+            MemberId = memberId,
+            Question = question,
+            SystemMessage = systemMessage,
+        });
+
+        await actual.Should().ThrowAsync<TopicNotFoundException>();
+    }
 }

@@ -35,8 +35,8 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
     /// <returns></returns>
     public async IAsyncEnumerable<string> HandlerAsync(AddMessageInput input)
     {
-        var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
-        if (messageChannel.IsNull())
+        var topic = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
+        if (topic.IsNull())
         {
             throw new TopicNotFoundException("找不到訊息頻道");
         }
@@ -46,7 +46,7 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
             ChatMessage.FromSystem(input.SystemMessage),
         };
 
-        foreach (var messageChannelMessage in messageChannel.Messages)
+        foreach (var messageChannelMessage in topic.Messages)
         {
             openAiMessages.Add(ChatMessage.FromUser(messageChannelMessage.Question));
             openAiMessages.Add(ChatMessage.FromAssistant(messageChannelMessage.Answer));
@@ -82,19 +82,19 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
         }
         
         var messageId = await _messageOutPort.GenerateIdAsync();
-        messageChannel.AddMessage(messageId,
+        topic.AddMessage(messageId,
             input.Question,
             answer,
             promptTokens,
             completionTokens,
             _timeProvider);
 
-        var success = await _topicOutPort.UpdateAsync(messageChannel);
+        var success = await _topicOutPort.UpdateAsync(topic);
         if (!success)
         {
             throw new CreateMessageErrorException("Create message failed.");
         }
         
-        await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
+        await _domainEventBus.DispatchDomainEventsAsync(topic);
     }
 }

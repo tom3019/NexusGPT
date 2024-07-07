@@ -21,8 +21,8 @@ public class TopicQueryService : ITopicQueryService
     /// <returns></returns>
     public async Task<IEnumerable<TopicDataModel>> GetListAsync(Guid memberId)
     {
-        var messageChannels = await _topicOutPort.GetListAsync(memberId);
-        return messageChannels;
+        var topics = await _topicOutPort.GetListAsync(memberId);
+        return topics;
     }
     
     /// <summary>
@@ -33,13 +33,13 @@ public class TopicQueryService : ITopicQueryService
     /// <returns></returns>
     public async Task<Topic> GetDetailAsync(Guid topicId,Guid memberId)
     {
-        var messageChannel = await _topicOutPort.GetAsync(topicId, memberId);
-        if (messageChannel.IsNull())
+        var topic = await _topicOutPort.GetAsync(topicId, memberId);
+        if (topic.IsNull())
         {
             throw new TopicNotFoundException("找不到訊息頻道");
         }
         
-        return messageChannel;
+        return topic;
     }
 
     /// <summary>
@@ -50,8 +50,8 @@ public class TopicQueryService : ITopicQueryService
     /// <returns></returns>
     public async Task<IEnumerable<SearchTopicDataModel>> SearchTopicAsync(Guid memberId, string keyword)
     {
-        var searchMessageChannelDataModels = await _topicOutPort.SearchMessageChannelAsync(memberId, keyword);
-        return searchMessageChannelDataModels;
+        var topicDataModels = await _topicOutPort.SearchMessageChannelAsync(memberId, keyword);
+        return topicDataModels;
     }
 
 }
