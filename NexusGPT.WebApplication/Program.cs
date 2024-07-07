@@ -51,9 +51,12 @@ builder.Services.AddHttpClient("NexusGPT");
 builder.Services.AddNexusGptModule(b=>b.UseLocalImageStorage())
     .AddEventBusModule();
 
+var connectionString =  Environment.GetEnvironmentVariable("ConnectionString") 
+                        ?? throw new ArgumentNullException(nameof(Program),$"ConnectionString is null");
+
 builder.Services.AddDbContext<NexusGptDbContext>(
     o => 
-        o.UseSqlServer(builder.Configuration.GetConnectionString("NexusGPT")));
+        o.UseSqlServer(connectionString));
 
 builder.Services.AddCors(o =>
     o.AddPolicy("cors", b =>

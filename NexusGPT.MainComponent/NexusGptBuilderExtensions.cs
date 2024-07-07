@@ -26,10 +26,10 @@ public static class NexusGptBuilderExtensions
         var regionEndpoint = Amazon.RegionEndpoint.GetBySystemName(options.Region);
 
         var accessKey = Environment.GetEnvironmentVariable("AWS_ACCESSKEY") 
-                        ?? throw new ArgumentNullException("AWS_ACCESSKEY");
+                        ?? throw new ArgumentNullException(nameof(UseS3ImageStorage),"AWS_ACCESSKEY is null");
         
         var secretKey = Environment.GetEnvironmentVariable("AWS_SECRET") 
-                        ?? throw new ArgumentNullException("AWS_SECRET");
+                        ?? throw new ArgumentNullException(nameof(UseS3ImageStorage),"AWS_SECRET is null");
         
         var credentials = new BasicAWSCredentials(accessKey,secretKey);
         builder.ServiceCollection.AddScoped<IAmazonS3>(x=>
