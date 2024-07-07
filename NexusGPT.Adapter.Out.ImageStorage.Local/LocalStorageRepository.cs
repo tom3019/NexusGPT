@@ -1,6 +1,6 @@
 using NexusGPT.UseCase.Port.Out;
 
-namespace NexusGPT.Adapter.Out.Implements;
+namespace NexusGPT.Adapter.Out.ImageStorage.Local;
 
 public class LocalStorageRepository : IImageStorageOutPort
 {

@@ -15,9 +15,15 @@ public static class ServiceCollectionExtensions
     /// 加入NexusGPT模組
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="setup"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     /// <returns></returns>
-    public static IServiceCollection AddNexusGPTModule(this IServiceCollection service)
+    public static IServiceCollection AddNexusGptModule(this IServiceCollection service,
+        Action<INexusGptBuilder>  setup)
     {
+        var nexusGptBuilder = new NexusGptBuilder(service);
+        setup(nexusGptBuilder);
+        
         service.AddSingleton(TimeProvider.System);
         service.AddOpenAIService(o => o.ApiKey =
            Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new ArgumentNullException("OPENAI_API_KEY"));
@@ -55,7 +61,6 @@ public static class ServiceCollectionExtensions
     {
         service.AddScoped<ITopicOutPort, TopicRepository>();
         service.AddScoped<IMessageOutPort, MessageRepository>();
-        service.AddScoped<IImageStorageOutPort, LocalStorageRepository>();
         return service;
     }
 }
