@@ -7,13 +7,13 @@ namespace NexusGPT.UseCase;
 
 public class ChangeTitleService : IChangeTitleService
 {
-    private readonly ITopicOutPort _topic;
+    private readonly ITopicOutPort _topicOutPort;
     private readonly IDomainEventBus _domainEventBus;
 
-    public ChangeTitleService(ITopicOutPort topic,
+    public ChangeTitleService(ITopicOutPort topicOutPort,
         IDomainEventBus domainEventBus)
     {
-        _topic = topic;
+        _topicOutPort = topicOutPort;
         _domainEventBus = domainEventBus;
     }
 
@@ -26,18 +26,18 @@ public class ChangeTitleService : IChangeTitleService
     /// <returns></returns>
     public async Task<bool> HandleAsync(Guid topicId, Guid memberId, string title)
     {
-        var messageChannel = await _topic.GetAsync(topicId, memberId);
-        if (messageChannel.IsNull())
+        var topic = await _topicOutPort.GetAsync(topicId, memberId);
+        if (topic.IsNull())
         {
             throw new TopicNotFoundException("找不到訊息頻道");
         }
         
-        messageChannel.ChangeTitle(title);
+        topic.ChangeTitle(title);
 
-        var success = await _topic.UpdateAsync(messageChannel);
+        var success = await _topicOutPort.UpdateAsync(topic);
         if (success)
         {
-            await _domainEventBus.DispatchDomainEventsAsync(messageChannel);
+            await _domainEventBus.DispatchDomainEventsAsync(topic);
             return true;
         }
 

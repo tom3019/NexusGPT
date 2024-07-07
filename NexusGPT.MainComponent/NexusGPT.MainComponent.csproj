@@ -11,6 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\NexusGPT.Adapter.Out.ImageStorage.Local\NexusGPT.Adapter.Out.ImageStorage.Local.csproj" />
+      <ProjectReference Include="..\NexusGPT.Adapter.Out.ImageStorage.S3\NexusGPT.Adapter.Out.ImageStorage.S3.csproj" />
       <ProjectReference Include="..\NexusGPT.Adapter.Out\NexusGPT.Adapter.Out.csproj" />
       <ProjectReference Include="..\NexusGPT.UseCase\NexusGPT.UseCase.csproj" />
     </ItemGroup>

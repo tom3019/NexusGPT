@@ -35,8 +35,8 @@ public class ImportTopicService : IImportTopicService
     /// <exception cref="TopicMaxCountException"></exception>
     public async Task<ShareTopicResultModel> HandlerAsync(ImportTopicInput input)
     {
-        var messageChannels = await _topicOutPort.GetListAsync(input.MemberId);
-        if (messageChannels.Count() >= 5)
+        var topics = await _topicOutPort.GetListAsync(input.MemberId);
+        if (topics.Count() >= 5)
         {
             throw new TopicMaxCountException("超過最大聊天室數量");
         }
