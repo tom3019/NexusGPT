@@ -6,7 +6,7 @@ namespace NexusGPT.MainComponent;
 
 public static class NexusGptBuilderExtensions
 {
-    public static INexusGptBuilder UseLocalStorage(this INexusGptBuilder builder)
+    public static INexusGptBuilder UseLocalImageStorage(this INexusGptBuilder builder)
     {
         builder.ServiceCollection.AddScoped<IImageStorageOutPort, LocalStorageRepository>();
         return builder;
