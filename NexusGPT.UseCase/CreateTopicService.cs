@@ -28,7 +28,7 @@ public class CreateTopicService : ICreateTopicService
     /// <param name="memberId"></param>
     /// <param name="title"></param>
     /// <returns></returns>
-    public async Task<Guid> HandlerAsync(Guid memberId, string title)
+    public async Task<Guid> HandleAsync(Guid memberId, string title)
     {
         var messageChannels = await _topicOutPort.GetListAsync(memberId);
         if (messageChannels.Count() >= 5)

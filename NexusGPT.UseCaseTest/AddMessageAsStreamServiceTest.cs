@@ -65,7 +65,7 @@ public class AddMessageAsStreamServiceTest
     }
 
     [Fact]
-    public async Task HandlerAsyncTest_輸入問題_回傳答案並發佈事件()
+    public async Task HandleAsyncTest_輸入問題_回傳答案並發佈事件()
     {
         var channelId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -88,7 +88,7 @@ public class AddMessageAsStreamServiceTest
             GetTestData(resultMessage));
 
         var sut = SystemUnderTest();
-        var actual = sut.HandlerAsync(
+        var actual = sut.HandleAsync(
             new AddMessageInput
             {
                 TopicId = channelId,
@@ -107,7 +107,7 @@ public class AddMessageAsStreamServiceTest
 
 
     [Fact]
-    public async Task HandlerAsyncTest_輸入問題_更新資料庫失敗_拋出CreateMessageErrorException()
+    public async Task HandleAsyncTest_輸入問題_更新資料庫失敗_拋出CreateMessageErrorException()
     {
         var channelId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -130,7 +130,7 @@ public class AddMessageAsStreamServiceTest
             GetTestData(resultMessage));
 
         var sut = SystemUnderTest();
-        var actual =  sut.HandlerAsync(
+        var actual =  sut.HandleAsync(
             new AddMessageInput
             {
                 TopicId = channelId,
@@ -150,7 +150,7 @@ public class AddMessageAsStreamServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
+    public async Task HandleAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
     {
         var channelId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -163,7 +163,7 @@ public class AddMessageAsStreamServiceTest
         var resultMessage = "第二個問題的答案";
 
         var sut = SystemUnderTest();
-        var actual =  sut.HandlerAsync(
+        var actual =  sut.HandleAsync(
             new AddMessageInput
             {
                 TopicId = channelId,

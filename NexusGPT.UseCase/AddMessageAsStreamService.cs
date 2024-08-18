@@ -33,7 +33,7 @@ public class AddMessageAsStreamService : IAddMessageAsStreamService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public async IAsyncEnumerable<string> HandlerAsync(AddMessageInput input)
+    public async IAsyncEnumerable<string> HandleAsync(AddMessageInput input)
     {
         var topic = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (topic.IsNull())

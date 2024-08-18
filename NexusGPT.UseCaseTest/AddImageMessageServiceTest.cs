@@ -45,7 +45,7 @@ public class AddImageMessageServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenMessageChannelIsNull_ThrowMessageChannelNotFoundException()
+    public async Task HandleAsync_WhenMessageChannelIsNull_ThrowMessageChannelNotFoundException()
     {
         // Arrange
         var input = new AddImageMessageInput
@@ -58,14 +58,14 @@ public class AddImageMessageServiceTest
         var service = GetSystemUnderTest();
         
         // Act
-        Func<Task> act = async () => await service.HandlerAsync(input);
+        Func<Task> act = async () => await service.HandleAsync(input);
         
         // Assert
         await act.Should().ThrowAsync<TopicNotFoundException>();
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenImageCreateResponseIsNotSuccessful_ThrowImageCreateException()
+    public async Task HandleAsync_WhenImageCreateResponseIsNotSuccessful_ThrowImageCreateException()
     {
         // Arrange
         var input = new AddImageMessageInput
@@ -84,14 +84,14 @@ public class AddImageMessageServiceTest
         var service = GetSystemUnderTest();
         
         // Act
-        Func<Task> act = async () => await service.HandlerAsync(input);
+        Func<Task> act = async () => await service.HandleAsync(input);
         
         // Assert
         await act.Should().ThrowAsync<ImageCreateException>();
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenImageCreateResponseIsSuccessful_ReturnMarkDownFilePath()
+    public async Task HandleAsync_WhenImageCreateResponseIsSuccessful_ReturnMarkDownFilePath()
     {
         // Arrange
         var input = new AddImageMessageInput
@@ -122,7 +122,7 @@ public class AddImageMessageServiceTest
         var service = GetSystemUnderTest();
         
         // Act
-        var act = await service.HandlerAsync(input);
+        var act = await service.HandleAsync(input);
         
         // Assert
         var mdUrl = $"![Test]({imageUrl})";
@@ -132,7 +132,7 @@ public class AddImageMessageServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenUpdateMessageChannelFailed_ThrowCreateMessageErrorException()
+    public async Task HandleAsync_WhenUpdateMessageChannelFailed_ThrowCreateMessageErrorException()
     {
         // Arrange
         var input = new AddImageMessageInput
@@ -163,7 +163,7 @@ public class AddImageMessageServiceTest
         var service = GetSystemUnderTest();
         
         // Act
-        Func<Task> act = async () => await service.HandlerAsync(input);
+        Func<Task> act = async () => await service.HandleAsync(input);
         
         // Assert
         await act.Should().ThrowAsync<CreateMessageErrorException>();

@@ -38,7 +38,7 @@ public class AddImageMessageService : IAddImageMessageService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public async Task<string> HandlerAsync(AddImageMessageInput input)
+    public async Task<string> HandleAsync(AddImageMessageInput input)
     {
         var messageChannel = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (messageChannel.IsNull())

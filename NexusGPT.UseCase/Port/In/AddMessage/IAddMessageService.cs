@@ -7,5 +7,5 @@ public interface IAddMessageService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    Task<string> HandlerAsync(AddMessageInput input);
+    Task<string> HandleAsync(AddMessageInput input);
 }

@@ -31,7 +31,7 @@ public class MessageHub : Hub
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
         var createTime = DateTime.Now;
-        await foreach (var messageStream in _addMessageAsStreamService.HandlerAsync(
+        await foreach (var messageStream in _addMessageAsStreamService.HandleAsync(
                            new AddMessageInput
                            {
                                TopicId = parameter.TopicId,
@@ -62,7 +62,7 @@ public class MessageHub : Hub
     public async Task SendImageMessage(ImageMessageParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var imageUrl = await _addImageMessageService.HandlerAsync(
+        var imageUrl = await _addImageMessageService.HandleAsync(
             new AddImageMessageInput
             {
                 Message = parameter.Message,

@@ -34,7 +34,7 @@ public class ShareTopicService : IShareTopicService
     /// <param name="memberId"></param>
     /// <returns></returns>
     /// <exception cref="TopicNotFoundException"></exception>
-    public async Task<ShareTopicResultModel> HandlerAsync(Guid id, Guid memberId)
+    public async Task<ShareTopicResultModel> HandleAsync(Guid id, Guid memberId)
     {
         var topic = await _topicOutPort.GetAsync(id);
         if (topic.IsNull())

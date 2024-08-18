@@ -11,5 +11,5 @@ public interface IImportTopicService
     /// <param name="input"></param>
     /// <returns></returns>
     /// <exception cref="TopicMaxCountException"></exception>
-    Task<ShareTopicResultModel> HandlerAsync(ImportTopicInput input);
+    Task<ShareTopicResultModel> HandleAsync(ImportTopicInput input);
 }
