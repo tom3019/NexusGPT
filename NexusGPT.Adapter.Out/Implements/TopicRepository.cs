@@ -24,6 +24,7 @@ public class TopicRepository : ITopicOutPort
         while (isExist)
         {
             id = Guid.NewGuid();
+            isExist = await IsExistAsync(id);
         }
 
         return id;
