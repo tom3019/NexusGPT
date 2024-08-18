@@ -11,5 +11,5 @@ public interface ICreateTopicService
     /// <param name="memberId"></param>
     /// <param name="title"></param>
     /// <returns></returns>
-    Task<Guid> HandlerAsync(Guid memberId,string title);
+    Task<Guid> HandleAsync(Guid memberId,string title);
 }

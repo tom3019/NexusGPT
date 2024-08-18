@@ -31,7 +31,7 @@ public class ImportTopicServiceTest
     }
 
     [Fact]
-    public async Task HandlerAsync_WhenMessageChannelsCountIsGreaterThan5_ThrowTopicMaxCountException()
+    public async Task HandleAsync_WhenMessageChannelsCountIsGreaterThan5_ThrowTopicMaxCountException()
     {
         // Arrange
         var memberId = Guid.NewGuid();
@@ -77,14 +77,14 @@ public class ImportTopicServiceTest
         
         // Act
         var sut = GetSystemUnderTest();
-        Func<Task> act = async () => await sut.HandlerAsync(input);
+        Func<Task> act = async () => await sut.HandleAsync(input);
         
         // Assert
         await act.Should().ThrowAsync<TopicMaxCountException>();
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenSaveTopicSuccess_ReturnShareTopicResultModel()
+    public async Task HandleAsync_WhenSaveTopicSuccess_ReturnShareTopicResultModel()
     {
         // Arrange
         var memberId = Guid.NewGuid();
@@ -110,7 +110,7 @@ public class ImportTopicServiceTest
         
         // Act
         var sut = GetSystemUnderTest();
-        var result = await sut.HandlerAsync(input);
+        var result = await sut.HandleAsync(input);
         
         // Assert
         result.Should().NotBeNull();
@@ -119,7 +119,7 @@ public class ImportTopicServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenSaveTopicFailed_ReturnShareTopicResultModel()
+    public async Task HandleAsync_WhenSaveTopicFailed_ReturnShareTopicResultModel()
     {
         // Arrange
         var memberId = Guid.NewGuid();
@@ -145,7 +145,7 @@ public class ImportTopicServiceTest
         
         // Act
         var sut = GetSystemUnderTest();
-        var result = await sut.HandlerAsync(input);
+        var result = await sut.HandleAsync(input);
         
         // Assert
         result.Should().NotBeNull();

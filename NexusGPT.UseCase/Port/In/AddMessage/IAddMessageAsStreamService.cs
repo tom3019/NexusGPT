@@ -7,5 +7,5 @@ public interface IAddMessageAsStreamService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    IAsyncEnumerable<string> HandlerAsync(AddMessageInput input);
+    IAsyncEnumerable<string> HandleAsync(AddMessageInput input);
 }

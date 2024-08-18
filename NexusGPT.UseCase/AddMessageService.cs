@@ -35,7 +35,7 @@ public class AddMessageService : IAddMessageService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public async Task<string> HandlerAsync(AddMessageInput input)
+    public async Task<string> HandleAsync(AddMessageInput input)
     {
         var topic = await _topicOutPort.GetAsync(input.TopicId, input.MemberId);
         if (topic.IsNull())

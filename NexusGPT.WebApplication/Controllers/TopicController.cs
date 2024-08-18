@@ -54,7 +54,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] TopicParameter parameter)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var topicId = await _createTopicService.HandlerAsync(memberId, parameter.Title);
+        var topicId = await _createTopicService.HandleAsync(memberId, parameter.Title);
         if (topicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
@@ -255,7 +255,7 @@ public class TopicController : ControllerBase
                     CreateTime = x.CreateTime
                 })
         };
-        var shareTopicResultModel = await _importTopicService.HandlerAsync(input);
+        var shareTopicResultModel = await _importTopicService.HandleAsync(input);
         if (shareTopicResultModel.TopicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>
@@ -300,7 +300,7 @@ public class TopicController : ControllerBase
     public async Task<IActionResult> ShareAsync(Guid id)
     {
         var memberId = new Guid("E4727ED6-52E8-4C4C-AF92-2ED42ECF1D59");
-        var shareTopicResultModel = await _shareTopicService.HandlerAsync(id, memberId);
+        var shareTopicResultModel = await _shareTopicService.HandleAsync(id, memberId);
         if (shareTopicResultModel.TopicId == Guid.Empty)
         {
             return BadRequest(new ResultViewModel<Guid>

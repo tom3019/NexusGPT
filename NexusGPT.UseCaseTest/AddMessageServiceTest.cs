@@ -37,7 +37,7 @@ public class AddMessageServiceTest
     }
 
     [Fact]
-    public async Task HandlerAsyncTest_輸入問題_回傳答案並發佈事件()
+    public async Task HandleAsyncTest_輸入問題_回傳答案並發佈事件()
     {
         var channelId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -75,7 +75,7 @@ public class AddMessageServiceTest
             });
 
         var sut = SystemUnderTest();
-        var actual = await sut.HandlerAsync(new AddMessageInput
+        var actual = await sut.HandleAsync(new AddMessageInput
         {
             TopicId = channelId,
             MemberId = memberId,
@@ -88,7 +88,7 @@ public class AddMessageServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsyncTest_輸入問題_更新資料庫失敗_拋出CreateMessageErrorException()
+    public async Task HandleAsyncTest_輸入問題_更新資料庫失敗_拋出CreateMessageErrorException()
     {
         var channelId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -126,7 +126,7 @@ public class AddMessageServiceTest
             });
 
         var sut = SystemUnderTest();
-        Func<Task> actual = ()=> sut.HandlerAsync(new AddMessageInput
+        Func<Task> actual = ()=> sut.HandleAsync(new AddMessageInput
         {
             TopicId = channelId,
             MemberId = memberId,
@@ -138,7 +138,7 @@ public class AddMessageServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
+    public async Task HandleAsyncTest_找不到訊息頻道_拋出TopicNotFoundException()
     {
         var topicId = Guid.NewGuid();
         var memberId = Guid.NewGuid();
@@ -176,7 +176,7 @@ public class AddMessageServiceTest
             });
 
         var sut = SystemUnderTest();
-        Func<Task> actual = ()=> sut.HandlerAsync(new AddMessageInput
+        Func<Task> actual = ()=> sut.HandleAsync(new AddMessageInput
         {
             TopicId = topicId,
             MemberId = memberId,

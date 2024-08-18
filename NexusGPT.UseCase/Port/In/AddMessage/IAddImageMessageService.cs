@@ -10,5 +10,5 @@ public interface IAddImageMessageService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    Task<string> HandlerAsync(AddImageMessageInput input);
+    Task<string> HandleAsync(AddImageMessageInput input);
 }

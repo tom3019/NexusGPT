@@ -31,7 +31,7 @@ public class ShareTopicServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenMessageChannelIsNull_ThrowTopicNotFoundException()
+    public async Task HandleAsync_WhenMessageChannelIsNull_ThrowTopicNotFoundException()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -40,14 +40,14 @@ public class ShareTopicServiceTest
         var sut = GetSystemUnderTest();
         
         // Act
-        var act = async () => await sut.HandlerAsync(id, memberId);
+        var act = async () => await sut.HandleAsync(id, memberId);
         
         // Assert
         await act.Should().ThrowAsync<TopicNotFoundException>();
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenMessageChannelIsNotNull_ShouldReturnSuccess()
+    public async Task HandleAsync_WhenMessageChannelIsNotNull_ShouldReturnSuccess()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -62,7 +62,7 @@ public class ShareTopicServiceTest
         var sut = GetSystemUnderTest();
         
         // Act
-        var actual = await sut.HandlerAsync(id, memberId);
+        var actual = await sut.HandleAsync(id, memberId);
         
         // Assert
         actual.Should().NotBeNull();
@@ -71,7 +71,7 @@ public class ShareTopicServiceTest
     }
     
     [Fact]
-    public async Task HandlerAsync_WhenSaveFailed_ShouldReturnTopicIsEmpty()
+    public async Task HandleAsync_WhenSaveFailed_ShouldReturnTopicIsEmpty()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -86,7 +86,7 @@ public class ShareTopicServiceTest
         var sut = GetSystemUnderTest();
         
         // Act
-        var actual = await sut.HandlerAsync(id, memberId);
+        var actual = await sut.HandleAsync(id, memberId);
         
         // Assert
         actual.TopicId.Should().Be(Guid.Empty);
