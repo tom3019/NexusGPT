@@ -30,7 +30,7 @@ public class CreateTopicServiceTest
     }
 
     [Fact]
-    public async Task HandlerAsyncTest_輸入MemberId_建立訊息頻道成功_傳回True與發送事件()
+    public async Task HandleAsyncTest_輸入MemberId_建立訊息頻道成功_傳回True與發送事件()
     {
         var memberId = Guid.NewGuid();
         var channelId = Guid.NewGuid();
@@ -40,14 +40,14 @@ public class CreateTopicServiceTest
         var title = "title";
 
         var sut = GetSystemUnderTest();
-        var actual = await sut.HandlerAsync(memberId, title);
+        var actual = await sut.HandleAsync(memberId, title);
 
         actual.Should().Be(channelId);
         _domainEventBus.Received(1).DispatchDomainEventsAsync(Arg.Any<Topic>());
     }
 
     [Fact]
-    public async Task HandlerAsyncTest_輸入MemberId_建立訊息頻道失敗_傳回False()
+    public async Task HandleAsyncTest_輸入MemberId_建立訊息頻道失敗_傳回False()
     {
         var memberId = Guid.NewGuid();
         _topicOutPort.GenerateIdAsync().Returns(Guid.NewGuid());
@@ -55,13 +55,13 @@ public class CreateTopicServiceTest
         var title = "title";
 
         var sut = GetSystemUnderTest();
-        var actual = await sut.HandlerAsync(memberId, title);
+        var actual = await sut.HandleAsync(memberId, title);
 
         actual.Should().Be(Guid.Empty);
     }
 
     [Fact]
-    public async Task HandlerAsyncTest_建立頻道超過用戶最大值_拋出TopicMaxCountException()
+    public async Task HandleAsyncTest_建立頻道超過用戶最大值_拋出TopicMaxCountException()
     {
         var memberId = Guid.NewGuid();
         _topicOutPort.GetListAsync(memberId).Returns(
@@ -91,7 +91,7 @@ public class CreateTopicServiceTest
         var title = "title";
 
         var sut = GetSystemUnderTest();
-        var actual = () => sut.HandlerAsync(memberId, title);
+        var actual = () => sut.HandleAsync(memberId, title);
 
         await actual.Should().ThrowAsync<TopicMaxCountException>();
     }

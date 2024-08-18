@@ -33,7 +33,7 @@ public class ImportTopicService : IImportTopicService
     /// <param name="input"></param>
     /// <returns></returns>
     /// <exception cref="TopicMaxCountException"></exception>
-    public async Task<ShareTopicResultModel> HandlerAsync(ImportTopicInput input)
+    public async Task<ShareTopicResultModel> HandleAsync(ImportTopicInput input)
     {
         var topics = await _topicOutPort.GetListAsync(input.MemberId);
         if (topics.Count() >= 5)

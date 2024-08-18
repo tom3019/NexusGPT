@@ -12,5 +12,5 @@ public interface IShareTopicService
     /// <param name="memberId"></param>
     /// <returns></returns>
     /// <exception cref="TopicNotFoundException"></exception>
-    Task<ShareTopicResultModel> HandlerAsync(Guid id, Guid memberId);
+    Task<ShareTopicResultModel> HandleAsync(Guid id, Guid memberId);
 }
